@@ -1,0 +1,8 @@
+https://www.phishtank.com/developer_info.php
+https://openphish.com/
+http://www.joewein.de/sw/blacklist.htm
+http://www.malwaredomains.com/wordpress/?page_id=66
+https://www.malwarepatrol.net/
+http://www.malwaredomainlist.com/
+https://majestic.com/reports/majestic-million
+http://www.hosts-file.net/
