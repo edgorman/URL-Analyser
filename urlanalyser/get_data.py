@@ -6,10 +6,8 @@ import whois
 import requests
 import pandas as pd
 from datetime import datetime
-
 from pythonping import ping
-
-from src import *
+from urlanalyser import *
 
 
 # Return valid url or None

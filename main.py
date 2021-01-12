@@ -9,7 +9,7 @@ import numpy as np
 from sklearn import svm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import Perceptron
-from src import *
+from urlanalyser import *
 
 
 if __name__ == "__main__":
