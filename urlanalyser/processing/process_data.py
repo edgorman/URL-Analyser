@@ -17,9 +17,6 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import accuracy_score, precision_score, f1_score, recall_score, confusion_matrix
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 import matplotlib.pyplot as plt
-from src import *
-from .build_model import build_cnn
-from .build_model import refine_cnn
 
 
 # Get conditions of python call:
