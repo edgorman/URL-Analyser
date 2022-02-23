@@ -3,8 +3,10 @@ import sys
 import argparse
 
 from urlanalyser import app
-from urlanalyser.processing import is_valid_url
-from urlanalyser.processing import is_valid_model
+from urlanalyser.common.utils import load_json_as_dict
+from urlanalyser.common.utils import is_valid_url
+from urlanalyser.common.utils import is_valid_model
+from urlanalyser.common.utils import is_model_stored
 
 if __name__ == '__main__':
     ''' 
@@ -30,17 +32,46 @@ if __name__ == '__main__':
     stdout = sys.stdout
     if not args.verbose:
         sys.stdout = open(os.devnull, 'w')
+    
+    # Load model and feature dicts
+    try:
+        models_dictionary = load_json_as_dict(os.path.join(os.path.realpath(__file__), "data", "model-results.json"))
+        features_dictionary = load_json_as_dict(os.path.join(os.path.realpath(__file__), "data", "feature-sets.json"))
+    except:
+        print("Error: Could not load 'data/model-results.json' or 'data/feature-sets.json'.")
+        exit(-1)
 
-    # Refine model
-    if args.refine:
-        if is_valid_model(args.model, args.data, args.feats):
-            app.train_model(args.model, args.data, args.feats, args.save)
-
-    # Predict url
-    if args.url is not None:
-        if is_valid_model(args.model, args.data, args.feats):
+    # Validate chosen model and features
+    if is_valid_model(
+        models_dictionary,
+        features_dictionary,
+        args.model,
+        args.data,
+        args.feats
+    ):
+        # Train model
+        if args.train or not is_model_stored(args.model):
+            print("Info: Training '", args.model, "' for data type '", args.data, "' and features '", args.feats, "'.")
+            model = app.train_model(args.model, args.data, args.feats, args.save)
+        # Load model
+        else:
+            print("Info: Loading '", args.model, "' for data type '", args.data, "' and features '", args.feats, "'.")
+            model = app.load_model(args.model, args.data, args.feats)
+        
+        # Predict url
+        if args.url is not None:
             if is_valid_url(args.url):
+                print("Info: Predicting url '", args.url, "'.")
+                is_malicious = app.predict_url(args.url, model)
+
                 sys.stdout = stdout
-                is_malicious = app.predict_url(args.url, args.model, args.data, args.feats)
-                print("Malicious") if is_malicious else print("Benign")
+                result = "Malicious" if is_malicious else "Benign"
+                print("Result: The url '", args.url, "' is ", result)
+            else:
+                print("Error: Could not load url '", args.url, "'.")
+                exit(-1)
+    else:
+        print("Error: Could not load model '", args.model, "' for data type '", args.data, "' and features '", args.feats, "'.")
+        exit(-1)
+
     
