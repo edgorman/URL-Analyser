@@ -8,6 +8,10 @@ from urlanalyser.common.utils import is_valid_url
 from urlanalyser.common.utils import is_valid_model
 from urlanalyser.common.utils import is_model_stored
 
+# App constants
+DATA_DIRECTORY = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data")
+MODELS_DIRECTORY = os.path.join(os.path.dirname(os.path.realpath(__file__)), "models")
+
 if __name__ == '__main__':
     ''' 
         This script processes input from user and decides which top-level function to run in app.py.
@@ -25,8 +29,6 @@ if __name__ == '__main__':
 
     # Note: Help and Version command are handled by argparse
     args = parser.parse_args(sys.argv[1:])
-    if args.help or args.version:
-        exit(0)
     
     # Handle verbose-ness
     stdout = sys.stdout
@@ -35,43 +37,38 @@ if __name__ == '__main__':
     
     # Load model and feature dicts
     try:
-        models_dictionary = load_json_as_dict(os.path.join(os.path.realpath(__file__), "data", "model-results.json"))
-        features_dictionary = load_json_as_dict(os.path.join(os.path.realpath(__file__), "data", "feature-sets.json"))
+        models_dictionary = load_json_as_dict(os.path.join(DATA_DIRECTORY, "model-results.json"))
+        features_dictionary = load_json_as_dict(os.path.join(DATA_DIRECTORY, "feature-sets.json"))
     except:
         print("Error: Could not load 'data/model-results.json' or 'data/feature-sets.json'.")
         exit(-1)
 
-    # Validate chosen model and features
-    if is_valid_model(
-        models_dictionary,
-        features_dictionary,
-        args.model,
-        args.data,
-        args.feats
-    ):
+    # Validate chosen settings for model
+    if is_valid_model(models_dictionary, args.model, args.data, args.feats):
         # Train model
-        if args.train or not is_model_stored(args.model):
-            print("Info: Training '", args.model, "' for data type '", args.data, "' and features '", args.feats, "'.")
+        if args.train or not is_model_stored(args.model, args.data, args.feats):
+            print("Info: Training '",args.model,"' for data type '",args.data,"' and features '",args.feats,"'.")
             model = app.train_model(args.model, args.data, args.feats, args.save)
         # Load model
         else:
-            print("Info: Loading '", args.model, "' for data type '", args.data, "' and features '", args.feats, "'.")
+            print("Info: Loading '",args.model,"' for data type '",args.data,"' and features '",args.feats,"'.")
             model = app.load_model(args.model, args.data, args.feats)
         
         # Predict url
         if args.url is not None:
+            # If url is valid
             if is_valid_url(args.url):
-                print("Info: Predicting url '", args.url, "'.")
+                print("Info: Predicting url '",args.url,"'.")
                 is_malicious = app.predict_url(args.url, model)
 
                 sys.stdout = stdout
                 result = "Malicious" if is_malicious else "Benign"
-                print("Result: The url '", args.url, "' is ", result)
+                print("Result: The url '",args.url,"' is ", result)
             else:
-                print("Error: Could not load url '", args.url, "'.")
+                print("Error: Could not load url '",args.url,"'.")
                 exit(-1)
     else:
-        print("Error: Could not load model '", args.model, "' for data type '", args.data, "' and features '", args.feats, "'.")
+        print("Error: Could not load model '",args.model,"' for data type '",args.data,"' and features '",args.feats,"'.")
         exit(-1)
 
     
