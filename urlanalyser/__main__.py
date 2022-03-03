@@ -21,8 +21,7 @@ if __name__ == '__main__':
     parser.add_argument('-u', action='store', dest='url', help="url to test")
     parser.add_argument('-m', action='store', dest='model', help="model to use", default='rf')
     parser.add_argument('-d', action='store', dest='data', help="data to use", default='content')
-    parser.add_argument('-f', action='store', dest='feats', help="features to use", default='all')
-    parser.add_argument('-save', action='store_true', dest='save', help="save this model's parameters (default: false)", default=False)
+    parser.add_argument('-f', action='store', dest='feats', help="features to use", default='0')
     parser.add_argument('-train', action='store_true', dest='train', help="train this model's parameters (default: false)", default=False)
     parser.add_argument('-verbose', action='store_true', dest='verbose', help="show extra information while running (default: false)", default=False)
     parser.add_argument('-version', action='version', version='%(prog)s@dev')
@@ -40,35 +39,35 @@ if __name__ == '__main__':
         models_dictionary = load_json_as_dict(os.path.join(DATA_DIRECTORY, "model-results.json"))
         features_dictionary = load_json_as_dict(os.path.join(DATA_DIRECTORY, "feature-sets.json"))
     except:
-        print("Error: Could not load 'data/model-results.json' or 'data/feature-sets.json'.")
+        print(f"Error: Could not load 'data/model-results.json' or 'data/feature-sets.json'.")
         exit(-1)
 
     # Validate chosen settings for model
     if is_valid_model(models_dictionary, args.model, args.data, args.feats):
         # Train model
         if args.train or not is_model_stored(args.model, args.data, args.feats):
-            print("Info: Training '",args.model,"' for data type '",args.data,"' and features '",args.feats,"'.")
-            model = app.train_model(args.model, args.data, args.feats, args.save)
+            print(f"Info: Training '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
+            model = app.train_model(args.model, args.data, args.feats)
         # Load model
         else:
-            print("Info: Loading '",args.model,"' for data type '",args.data,"' and features '",args.feats,"'.")
+            print(f"Info: Loading '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
             model = app.load_model(args.model, args.data, args.feats)
         
         # Predict url
         if args.url is not None:
             # If url is valid
             if is_valid_url(args.url):
-                print("Info: Predicting url '",args.url,"'.")
+                print(f"Info: Predicting url '{args.url}'.")
                 is_malicious = app.predict_url(args.url, model)
 
                 sys.stdout = stdout
                 result = "Malicious" if is_malicious else "Benign"
-                print("Result: The url '",args.url,"' is ", result)
+                print(f"The url '{args.url}' is predicted to be {result}")
             else:
-                print("Error: Could not load url '",args.url,"'.")
+                print(f"Error: Could not load url '{args.url}'.")
                 exit(-1)
     else:
-        print("Error: Could not load model '",args.model,"' for data type '",args.data,"' and features '",args.feats,"'.")
+        print(f"Error: Could not load model '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
         exit(-1)
 
     
