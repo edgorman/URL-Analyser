@@ -1,5 +1,6 @@
+from importlib import import_module
 
-def train_model(model_name, dataset_name, feature_index):
+def train_model(model_name, dataset_name, feature_index, models_dictionary):
     '''
         Train a model with the given configuration
 
@@ -7,11 +8,32 @@ def train_model(model_name, dataset_name, feature_index):
             model_name: The model to use in training
             dataset_name: The dataset to use in training
             feature_index: The features to use in training
+            models_dictionary: Dictionary of models (used to get class name)
         
         Returns:
             model: The newly trained model
     '''
-    return None
+    # Extract module and path names from class name
+    # e.g. sklearn.svm.SVC
+    class_paths = models_dictionary[model_name]["class"].split('.')
+    class_name = class_paths[-1]
+    class_path = ".".join(class_paths[:-1])
+    class_object = getattr(import_module(class_path), class_name)
+
+    # Initialise the model (default hyperparameters)
+    model = class_object()
+
+    # Initialise the data
+
+    # Extract the features
+
+    # Split into training and testing
+
+    # Tune hyperparameters
+
+    # Train the model
+
+    return model
 
 def load_model(model_name, dataset_name, feature_index):
     '''
