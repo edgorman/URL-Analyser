@@ -50,7 +50,7 @@ if __name__ == '__main__':
         # Train model
         if args.train or not is_model_stored(args.model, args.data, args.feats):
             print(f"Info: Training '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
-            model = app.train_model(args.model, args.data, args.feats, models_dictionary)
+            model = app.train_model(models_dictionary[args.model], args.data, args.feats)
         # Load model
         else:
             print(f"Info: Loading '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")

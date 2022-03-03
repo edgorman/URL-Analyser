@@ -1,6 +1,7 @@
-from importlib import import_module
+from urlanalyser.common.utils import get_class
+from urlanalyser.processing.load_data import get_data
 
-def train_model(model_name, dataset_name, feature_index, models_dictionary):
+def train_model(model_name, dataset_name, feature_index):
     '''
         Train a model with the given configuration
 
@@ -8,22 +9,19 @@ def train_model(model_name, dataset_name, feature_index, models_dictionary):
             model_name: The model to use in training
             dataset_name: The dataset to use in training
             feature_index: The features to use in training
-            models_dictionary: Dictionary of models (used to get class name)
         
         Returns:
             model: The newly trained model
     '''
     # Extract module and path names from class name
     # e.g. sklearn.svm.SVC
-    class_paths = models_dictionary[model_name]["class"].split('.')
-    class_name = class_paths[-1]
-    class_path = ".".join(class_paths[:-1])
-    class_object = getattr(import_module(class_path), class_name)
+    class_object  = get_class(model_name)
 
     # Initialise the model (default hyperparameters)
     model = class_object()
 
     # Initialise the data
+    data = get_data(dataset_name, feature_index)
 
     # Extract the features
 
