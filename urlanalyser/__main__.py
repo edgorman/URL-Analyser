@@ -5,11 +5,11 @@ import os
 import sys
 import argparse
 
-from urlanalyser import app
-from urlanalyser.common.utils import load_json_as_dict
-from urlanalyser.common.utils import is_valid_url
-from urlanalyser.common.utils import is_valid_model
-from urlanalyser.common.utils import is_model_stored
+from URLAnalyser import app
+from URLAnalyser.common.utils import load_json_as_dict
+from URLAnalyser.common.utils import is_valid_url
+from URLAnalyser.common.utils import is_valid_model
+from URLAnalyser.common.utils import is_model_stored
 
 # App constants
 DATA_DIRECTORY = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data")

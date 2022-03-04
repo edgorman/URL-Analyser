@@ -1,8 +1,8 @@
 import pandas as pd
 
-from urlanalyser.processing.extract_lexical import get_lexical
-from urlanalyser.processing.extract_host import get_host
-from urlanalyser.processing.extract_content import get_content
+from URLAnalyser.processing.extract_lexical import get_lexical
+from URLAnalyser.processing.extract_host import get_host
+from URLAnalyser.processing.extract_content import get_content
 
 
 def get_urls():

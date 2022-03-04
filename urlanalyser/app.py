@@ -1,5 +1,5 @@
-from urlanalyser.common.utils import get_class
-from urlanalyser.processing.load_data import get_data
+from URLAnalyser.common.utils import get_class
+from URLAnalyser.processing.load_data import get_data
 
 def train_model(model_name, dataset_name, feature_index):
     '''
