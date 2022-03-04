@@ -1,9 +1,11 @@
 import string
 import numpy as np
 import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
 
-def length(url):
+from URLAnalyser.common.utils import bagOfWords
+
+
+def urlLength(url):
     return len(url)
 
 def labelCount(url):
@@ -21,17 +23,11 @@ def specialCharCount(url):
 def numberCharCount(url):
     return sum(map(url.count, [d for d in string.digits]))
 
-def bagOfWords(urls):
-    urls['name'] = urls['name'].fillna("")
-    vocabulary = []
-    vectorizer = CountVectorizer(vocabulary=vocabulary, decode_error='ignore')
-    return pd.DataFrame(vectorizer.transform(urls['name']).todense(), columns=vectorizer.get_feature_names())
-
 def get_lexical(urls, index):
     features = pd.DataFrame()
 
     if index == "0" or index == "1":
-        features.insert(0, 'length', urls['name'].apply(lambda x: length(x)), True)
+        features.insert(0, 'urlLength', urls['name'].apply(lambda x: urlLength(x)), True)
     
     if index == '0' or index == '2':
         features.insert(0, 'labelCount', urls['name'].apply(lambda x: labelCount(x)), True)
@@ -49,7 +45,7 @@ def get_lexical(urls, index):
         features.insert(0, 'numberCharCount', urls['name'].apply(lambda x: numberCharCount(x)), True)
 
     if index == '0' or index == '7':
-        bow_df = bagOfWords(urls)
+        bow_df = bagOfWords(urls['name'], []) # TODO use lexical vocab
         features = features.reset_index()
         features = pd.concat([features, bow_df], axis=1)
         features = features.drop(['index'], axis=1)

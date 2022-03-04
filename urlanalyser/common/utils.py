@@ -1,6 +1,8 @@
 import os
 import json
 from importlib import import_module
+import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
 
 
 def load_json_as_dict(filename):
@@ -33,3 +35,8 @@ def get_class(class_name):
     name = paths[-1]
 
     return getattr(import_module(path), name)
+
+def bagOfWords(data, vocab):
+    data = data.fillna("")
+    vectorizer = CountVectorizer(vocabulary=vocab, decode_error='ignore')
+    return pd.DataFrame(vectorizer.transform(data).todense(), columns=vectorizer.get_feature_names())
