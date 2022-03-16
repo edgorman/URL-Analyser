@@ -24,7 +24,7 @@ def generate_model_filename(model_name, dataset_name, feature_index):
 
 def is_model_stored(model_name, dataset_name, feature_index):
     filename = generate_model_filename(model_name, dataset_name, feature_index)
-    saved_model_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "data", "models")
+    saved_model_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "models")
     saved_models = [s.split(".")[0] for s in os.listdir(saved_model_path)]
 
     return filename in saved_models

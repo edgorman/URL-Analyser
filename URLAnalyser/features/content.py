@@ -1,7 +1,7 @@
 import pandas as pd
 
-from URLAnalyser.common.utils import bagOfWords
-from URLAnalyser.common.utils import safe_division
+from URLAnalyser.utils import bag_of_words
+from URLAnalyser.utils import safe_division
 
 
 def averageHTMLTagLength(content):
@@ -14,13 +14,13 @@ def get_content(urls, index):
         features.insert(0, 'redirect', urls['redirect'], True)
 
     if index == "0" or index == "2":
-        features = bagOfWords(features, urls['type'], []) # TODO use doctype vocab
+        features = bag_of_words(features, urls['type'], []) # TODO use doctype vocab
 
     if index == "0" or index == "3":
         features.insert(0, 'length', urls['length'], True)
 
     if index == "0" or index == "4":
-        features = bagOfWords(features, urls['content'], []) # TODO use htmltag vocab
+        features = bag_of_words(features, urls['content'], []) # TODO use htmltag vocab
 
     if index == "0" or index == "5":
         urls['content'] = urls['content'].fillna(" ")

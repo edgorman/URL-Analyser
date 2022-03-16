@@ -6,10 +6,11 @@ import sys
 import argparse
 
 from URLAnalyser import app
-from URLAnalyser.common.utils import load_json_as_dict
-from URLAnalyser.common.utils import is_valid_url
-from URLAnalyser.common.utils import is_valid_model
-from URLAnalyser.common.utils import is_model_stored
+from URLAnalyser.utils import load_json_as_dict
+from URLAnalyser.utils import is_valid_url
+from URLAnalyser.utils import is_valid_model
+from URLAnalyser.utils import is_model_stored
+
 
 # App constants
 DATA_DIRECTORY = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data")
@@ -47,14 +48,16 @@ if __name__ == '__main__':
 
     # Validate chosen settings for model
     if is_valid_model(models_dictionary, args.model, args.data, args.feats):
+        model_name = models_dictionary[args.model]['class']
+
         # Train model
         if args.train or not is_model_stored(args.model, args.data, args.feats):
             print(f"Info: Training '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
-            model = app.train_model(models_dictionary[args.model], args.data, args.feats)
+            model = app.train_model(model_name, args.data, args.feats)
         # Load model
         else:
             print(f"Info: Loading '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
-            model = app.load_model(args.model, args.data, args.feats)
+            model = app.load_model(model_name, args.data, args.feats)
         
         # Predict url
         if args.url is not None:

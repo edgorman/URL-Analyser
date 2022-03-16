@@ -2,7 +2,7 @@ import string
 import numpy as np
 import pandas as pd
 
-from URLAnalyser.common.utils import bagOfWords
+from URLAnalyser.utils import bag_of_words
 
 
 def urlLength(url):
@@ -45,6 +45,6 @@ def get_lexical(urls, index):
         features.insert(0, 'numberCharCount', urls['name'].apply(lambda x: numberCharCount(x)), True)
 
     if index == '0' or index == '7':
-        features = bagOfWords(features, urls['name'], []) # TODO use lexical vocab
+        features = bag_of_words(features, urls['name'], []) # TODO use lexical vocab
 
     return features

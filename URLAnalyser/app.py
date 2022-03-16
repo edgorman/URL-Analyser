@@ -1,5 +1,8 @@
-from URLAnalyser.common.utils import get_class
-from URLAnalyser.processing.load_data import get_data
+from URLAnalyser.utils import get_class
+from URLAnalyser.features.lexical import get_lexical
+from URLAnalyser.features.host import get_host
+from URLAnalyser.features.content import get_content
+
 
 def train_model(model_name, dataset_name, feature_index):
     '''
@@ -15,15 +18,18 @@ def train_model(model_name, dataset_name, feature_index):
     '''
     # Extract module and path names from class name
     # e.g. sklearn.svm.SVC
-    class_object  = get_class(model_name)
+    class_object = get_class(model_name)
 
     # Initialise the model (default hyperparameters)
     model = class_object()
 
-    # Initialise the data
-    data = get_data(dataset_name, feature_index)
+    # Generate list of URLs
+    url_list = []
 
     # Extract the features
+    if dataset_name == 'lexical': data = get_lexical(url_list, feature_index)
+    if dataset_name == 'host': data = get_host(url_list, feature_index)
+    if dataset_name == 'content': data = get_content(url_list, feature_index)
 
     # Split into training and testing
 
