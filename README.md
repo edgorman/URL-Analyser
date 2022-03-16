@@ -20,7 +20,7 @@ conda activate URLAnalayser
 ```
 
 ## Usage
-Make sure you have python installed before running the following command:
+Make sure you have conda environment installed before running the URLAnalayser:
 ```
 python -m URLAnalyser [-h] [-u URL] [-m MODEL] [-d DATA] [-f FEATS] [-save] [-refine] [-verbose] [-version]
 ```
@@ -31,9 +31,9 @@ Check if a URL is classified as malicious or benign:
 python -m URLAnalyser -u https://example.com
 ```
 
-Run the svm model on the lexical feature set:
+Run the svm model on the content feature set:
 ```
-python -m URLAnalyser -m svm -d lexical
+python -m URLAnalyser -m svm -d content -f 0
 ```
 
 ## Contributing
