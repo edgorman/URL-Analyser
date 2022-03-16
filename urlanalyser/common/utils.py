@@ -36,7 +36,13 @@ def get_class(class_name):
 
     return getattr(import_module(path), name)
 
-def bagOfWords(data, vocab):
-    data = data.fillna("")
+def bag_of_words(features, series, vocab):
+    series = series.fillna("")
     vectorizer = CountVectorizer(vocabulary=vocab, decode_error='ignore')
-    return pd.DataFrame(vectorizer.transform(data).todense(), columns=vectorizer.get_feature_names())
+    bow_df = pd.DataFrame(vectorizer.transform(series).todense(), columns=vectorizer.get_feature_names())
+    features = features.reset_index()
+    features = pd.concat([features, bow_df], axis=1)
+    return features.drop(['index'], axis=1)
+
+def safe_division(a, b):
+    return 0 if b == 0 else a / b

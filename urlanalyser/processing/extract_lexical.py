@@ -45,9 +45,6 @@ def get_lexical(urls, index):
         features.insert(0, 'numberCharCount', urls['name'].apply(lambda x: numberCharCount(x)), True)
 
     if index == '0' or index == '7':
-        bow_df = bagOfWords(urls['name'], []) # TODO use lexical vocab
-        features = features.reset_index()
-        features = pd.concat([features, bow_df], axis=1)
-        features = features.drop(['index'], axis=1)
+        features = bagOfWords(features, urls['name'], []) # TODO use lexical vocab
 
     return features
