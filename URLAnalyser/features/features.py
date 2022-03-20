@@ -25,6 +25,6 @@ def get_train_test_features(dataset_name, train_set, test_set, feature_index):
 
 def get_url_features(dataset_name, url_name, feature_index):
     extract_method = get_method(dataset_name)
-    feats, _ = extract_method(url_name, feature_index, get_vocab_dict())
+    feats = extract_method(url_name, feature_index, get_vocab_dict())
 
     return feats
