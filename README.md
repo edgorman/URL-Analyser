@@ -41,6 +41,8 @@ Run the testing scripts in the base directory:
 python -m pytest
 ```
 
+Add the flag `--disable-pytest-warnings` to remove Keras warnings.
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 

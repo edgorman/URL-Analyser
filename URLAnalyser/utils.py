@@ -1,4 +1,3 @@
-from base64 import decode
 import os
 import json
 from importlib import import_module
@@ -12,6 +11,7 @@ def load_json_as_dict(filename):
         return json.load(f)
 
 def is_valid_url(url):
+    # TODO: testing once this is done
     return True
 
 def is_valid_model(models_dictionary, model_name, dataset_name, feature_index):
@@ -24,12 +24,11 @@ def is_valid_model(models_dictionary, model_name, dataset_name, feature_index):
 def generate_model_filename(model_name, dataset_name, feature_index):
     return f"{model_name}-{dataset_name}-{feature_index}"
 
-def is_model_stored(model_name, dataset_name, feature_index):
+def is_model_stored(model_name, dataset_name, feature_index, path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "models")):
     filename = generate_model_filename(model_name, dataset_name, feature_index)
-    saved_model_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "models")
-    saved_models = [s.split(".")[0] for s in os.listdir(saved_model_path)]
+    model_filenames = [s.split(".")[0] for s in os.listdir(path)]
 
-    return filename in saved_models
+    return filename in model_filenames
 
 def get_class(class_name):
     paths = class_name.split('.')
@@ -38,13 +37,11 @@ def get_class(class_name):
 
     return getattr(import_module(path), name)
 
-def get_urls():
-    url_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "urls")
-
-    if "whitelist.txt" in os.listdir(url_path) and "blacklist.txt" in os.listdir(url_path): 
-        benign = pd.read_csv(os.path.join(url_path, "whitelist.txt"), header=None, names=["name"])
+def get_urls(path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "urls")):
+    if "whitelist.txt" in os.listdir(path) and "blacklist.txt" in os.listdir(path): 
+        benign = pd.read_csv(os.path.join(path, "whitelist.txt"), header=None, names=["name"])
         benign['class'] = 0
-        malicious = pd.read_csv(os.path.join(url_path, "blacklist.txt"), header=None, names=["name"])
+        malicious = pd.read_csv(os.path.join(path, "blacklist.txt"), header=None, names=["name"])
         malicious['class'] = 1
         
         return pd.concat([benign, malicious])
