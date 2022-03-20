@@ -36,6 +36,11 @@ Run the svm model on the content feature set:
 python -m URLAnalyser -m svm -d content -f 0
 ```
 
+Run the testing scripts in the base directory:
+```
+python -m pytest
+```
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
