@@ -1,6 +1,6 @@
 ### URLAnalyser ###
-URLAnalyser/data/blacklist.txt
-URLAnalyser/data/whitelist.txt
+URLAnalyser/data/urls/blacklist.txt
+URLAnalyser/data/urls/whitelist.txt
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

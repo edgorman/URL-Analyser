@@ -1,7 +1,7 @@
 from URLAnalyser.utils import get_class
-from URLAnalyser.features.lexical import get_lexical
-from URLAnalyser.features.host import get_host
-from URLAnalyser.features.content import get_content
+from URLAnalyser.utils import get_urls
+from URLAnalyser.utils import split_urls
+from URLAnalyser.features.features import get_train_test_features
 
 
 def train_model(model_name, dataset_name, feature_index):
@@ -23,15 +23,11 @@ def train_model(model_name, dataset_name, feature_index):
     # Initialise the model (default hyperparameters)
     model = class_object()
 
-    # Generate list of URLs
-    url_list = []
+    # Load URLs and split into train and test set
+    x_train, x_test, y_train, y_test = split_urls(get_urls())
 
     # Extract the features
-    if dataset_name == 'lexical': data = get_lexical(url_list, feature_index)
-    if dataset_name == 'host': data = get_host(url_list, feature_index)
-    if dataset_name == 'content': data = get_content(url_list, feature_index)
-
-    # Split into training and testing
+    x_train, x_test = get_train_test_features(dataset_name, x_train, x_test, feature_index)
 
     # Tune hyperparameters
 

@@ -1,7 +1,9 @@
+from base64 import decode
 import os
 import json
 from importlib import import_module
 import pandas as pd
+from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 
 
@@ -36,9 +38,31 @@ def get_class(class_name):
 
     return getattr(import_module(path), name)
 
+def get_urls():
+    url_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "urls")
+
+    if "whitelist.txt" in os.listdir(url_path) and "blacklist.txt" in os.listdir(url_path): 
+        benign = pd.read_csv(os.path.join(url_path, "whitelist.txt"), header=None, names=["name"])
+        benign['class'] = 0
+        malicious = pd.read_csv(os.path.join(url_path, "blacklist.txt"), header=None, names=["name"])
+        malicious['class'] = 1
+        
+        return pd.concat([benign, malicious])
+
+    return pd.DataFrame()
+
+def split_urls(url_df):
+    y = url_df['class']
+    x = url_df.drop(['class'], axis=1)
+    return train_test_split(x, y, test_size=0.2)
+
 def bag_of_words(features, series, vocab):
-    series = series.fillna("")
-    vectorizer = CountVectorizer(vocabulary=vocab, decode_error='ignore')
+    if len(vocab) == 0:
+        vectorizer = CountVectorizer(decode_error="ignore")
+        vectorizer.fit_transform(series)
+    else:
+        vectorizer = CountVectorizer(vocabulary=vocab, decode_error='ignore')
+    
     bow_df = pd.DataFrame(vectorizer.transform(series).todense(), columns=vectorizer.get_feature_names())
     features = features.reset_index()
     features = pd.concat([features, bow_df], axis=1)
