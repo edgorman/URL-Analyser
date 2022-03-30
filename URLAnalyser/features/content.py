@@ -13,7 +13,6 @@ def average_js_length(words):
     if len(js_words) == 0:
         return 0
     else:
-        print("made it")
         return average_word_length(js_words[0].split(' '))
 
 def get_content(urls, index, vocab=defaultdict()):
