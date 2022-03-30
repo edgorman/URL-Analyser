@@ -4,7 +4,6 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 import os
 import sys
 import argparse
-
 from URLAnalyser import app
 from URLAnalyser.utils import load_json_as_dict
 from URLAnalyser.utils import is_valid_url
@@ -40,10 +39,10 @@ if __name__ == '__main__':
     
     # Load model and feature dicts
     try:
-        models_dictionary = load_json_as_dict(os.path.join(DATA_DIRECTORY, "model-results.json"))
-        features_dictionary = load_json_as_dict(os.path.join(DATA_DIRECTORY, "feature-sets.json"))
+        models_dictionary = load_json_as_dict(os.path.join(DATA_DIRECTORY, "models", "results-dict.json"))
+        features_dictionary = load_json_as_dict(os.path.join(DATA_DIRECTORY, "features", "index-dict.json"))
     except:
-        print(f"Error: Could not load 'data/model-results.json' or 'data/feature-sets.json'.")
+        print(f"Error: Could not load 'data/models/results-dict.json' or 'data/features/index-dict.json'.")
         exit(-1)
 
     # Validate chosen settings for model
@@ -53,7 +52,7 @@ if __name__ == '__main__':
         # Train model
         if args.train or not is_model_stored(args.model, args.data, args.feats):
             print(f"Info: Training '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
-            model = app.train_model(model_name, args.data, args.feats)
+            model = app.train_model(model_name, args.data, args.feats, models_dictionary)
         # Load model
         else:
             print(f"Info: Loading '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")

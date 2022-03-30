@@ -1,0 +1,94 @@
+{
+    "svm": {
+        "title": "Support Vector Machine",
+        "class": "sklearn.svm.SVC",
+        "hyperparameters": {
+            "C": [0.001, 0.01, 0.1, 1, 10],
+            "kernel": ["linear", "poly", "rbf"],
+            "gamma": ["scale", "auto"],
+            "degree": [1, 2, 3, 5, 10]
+        },
+        "featuresets": {
+            "lexical": {
+                "indexes": [0, 1, 2, 3, 4, 5, 6, 7],
+                "results": [{}, {}, {}, {}, {}, {}, {}]
+            },
+            "host": {
+                "indexes": [0, 1, 2, 3, 4, 5, 6, 7],
+                "results": [{}, {}, {}, {}, {}, {}, {}]
+            },
+            "content": {
+                "indexes": [0, 1, 2, 3, 4, 5, 6, 7],
+                "results": [{}, {}, {}, {}, {}, {}, {}]
+            }
+        }
+    },
+    "rf": {
+        "title": "Random Forest",
+        "class": "sklearn.ensemble.RandomForestClassifier",
+        "hyperparameters": {
+            "n_estimators": [200, 600, 1000, 1400, 1800],
+            "max_features": ["sqrt", "log2", null],
+            "max_depth": [5, 10, 40, 70, 100, null],
+            "min_samples_leaf": [1, 2, 4, 8],
+            "min_samples_split": [2, 5, 10]
+        },
+        "featuresets": {
+            "lexical": {
+                "indexes": [0, 1, 2, 3, 4, 5, 6, 7],
+                "results": [{}, {}, {}, {}, {}, {}, {}]
+            },
+            "host": {
+                "indexes": [0, 1, 2, 3, 4, 5, 6, 7],
+                "results": [{}, {}, {}, {}, {}, {}, {}]
+            },
+            "content": {
+                "indexes": [0, 1, 2, 3, 4, 5, 6, 7],
+                "results": [{}, {}, {}, {}, {}, {}, {}]
+            }
+        }
+    },
+    "pc": {
+        "title": "Random Forest",
+        "class": "sklearn.linear_model.Perceptron",
+        "hyperparameters": {
+            "penalty": ["l2", "l1", "elasticnet", null],
+            "alpha": [0.001, 0.001, 0.01, 0.1],
+            "max_iter": [10, 100, 1000, 5000],
+            "early_stopping": [false, true]
+        },
+        "featuresets": {
+            "lexical": {
+                "indexes": [0, 1, 2, 3, 4, 5, 6, 7],
+                "results": [{}, {}, {}, {}, {}, {}, {}]
+            },
+            "host": {
+                "indexes": [0, 1, 2, 3, 4, 5, 6, 7],
+                "results": [{}, {}, {}, {}, {}, {}, {}]
+            },
+            "content": {
+                "indexes": [0, 1, 2, 3, 4, 5, 6, 7],
+                "results": [{}, {}, {}, {}, {}, {}, {}]
+            }
+        }
+    },
+    "cnn": {
+        "title": "Convolutional Neural Network",
+        "class": "keras.Model",
+        "hyperparameters": {
+            "first_activation": ["sigmoid", "elu"],
+            "second_activation": ["sigmoid", "elu"],
+            "dropout": [0.2, 0.5],
+            "first_neuron": [128, 256],
+            "second_neuron": [128, 256]
+        },
+        "featuresets": {
+            "lexical": {
+                "indexes": [8, 9, 10],
+                "reuslts": [{}, {}, {}]
+            },
+            "host": null,
+            "content": null
+        }
+    }
+}

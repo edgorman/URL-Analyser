@@ -45,7 +45,6 @@ def get_urls(path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "dat
         malicious['class'] = 1
         
         return pd.concat([benign, malicious]).dropna()
-
     return pd.DataFrame()
 
 def split_urls(url_df):
