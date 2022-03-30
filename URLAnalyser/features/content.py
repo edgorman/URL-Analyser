@@ -5,12 +5,16 @@ from URLAnalyser.utils import bag_of_words
 from URLAnalyser.utils import safe_division
 
 
-def averageWordLength(content):
-    return safe_division(sum(len(w) for w in content.split()), len(content.split()))
+def average_word_length(words):
+    return safe_division(sum(len(w) for w in words), len(words))
 
-def averageJsLength(content):
-    js_words = re.findall(r'<script\b[^>]*>([\s\S]*?)</script>', str(content))
-    return safe_division(sum(len(w) for w in js_words), len(js_words))
+def average_js_length(words):
+    js_words = re.findall(r'<script\b[^>]*>([\s\S]*?)</script>', ' '.join(words))
+    if len(js_words) == 0:
+        return 0
+    else:
+        print("made it")
+        return average_word_length(js_words[0].split(' '))
 
 def get_content(urls, index, vocab=defaultdict()):
     features = pd.DataFrame()
@@ -22,18 +26,18 @@ def get_content(urls, index, vocab=defaultdict()):
         features = bag_of_words(features, urls['type'], vocab['doctype'])
 
     if index == "0" or index == "3":
-        features.insert(0, 'length', urls['length'], True)
+        features.insert(0, 'contentLength', urls['content'].apply(lambda x: len(x), True))
 
     if index == "0" or index == "4":
         features = bag_of_words(features, urls['content'], vocab['htmltag'])
 
     if index == "0" or index == "5":
-        features.insert(0, 'averageTagLength', urls['content'].apply(lambda x: averageWordLength(x), True))
+        features.insert(0, 'averageWordLength', urls['content'].apply(lambda x: average_word_length(x.split()), True))
 
     if index == "0" or index == "6":
         features = bag_of_words(features, urls['content'], vocab['jstokens'])
 
     if index == "0" or index == "7":
-        features.insert(0, 'averageJsLength', urls['content'].apply(lambda x: averageJsLength(x), True))
+        features.insert(0, 'averageJsLength', urls['content'].apply(lambda x: average_js_length(x), True))
 
     return features
