@@ -1,8 +1,8 @@
 import os
 from ..utils import load_json_as_dict
-from lexical import get_lexical
-from host import get_host
-from content import get_content
+from URLAnalyser.features.lexical import get_lexical
+from URLAnalyser.features.host import get_host
+from URLAnalyser.features.content import get_content
 
 
 def get_method(dataset_name):

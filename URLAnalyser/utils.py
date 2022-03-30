@@ -44,7 +44,7 @@ def get_urls(path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "dat
         malicious = pd.read_csv(os.path.join(path, "blacklist.txt"), header=None, names=["name"])
         malicious['class'] = 1
         
-        return pd.concat([benign, malicious])
+        return pd.concat([benign, malicious]).dropna()
 
     return pd.DataFrame()
 
