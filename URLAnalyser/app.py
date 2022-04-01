@@ -5,12 +5,12 @@ from URLAnalyser.utils import split_urls
 from URLAnalyser.utils import save_sklearn_model
 from URLAnalyser.utils import load_sklearn_model
 from URLAnalyser.models.training import tune_hyperparameters
+from URLAnalyser.features.features import scale_features
 from URLAnalyser.features.features import get_train_test_features
 
 
 '''
     TODO:
-    * Add static logger class to handle verboseness and types of messages
     * Normalise features before sending to training
     * Handle saving and loading of keras models automatically
     * Add testing to new functions
@@ -43,8 +43,8 @@ def load_data(dataset_name, feature_index):
     Log.success(f"Generated features for '{dataset_name}'.")
 
     # Normalise features
-    # TODO
-    # Log.info(f"Normalised features for '{dataset_name}'.")
+    x_train, x_test = scale_features(x_train, x_test)
+    Log.info(f"Normalised features for '{dataset_name}'.")
 
     return x_train, x_test, y_train, y_test
 

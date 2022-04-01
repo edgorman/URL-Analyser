@@ -1,4 +1,6 @@
 import os
+from sklearn.preprocessing import StandardScaler
+
 from ..utils import load_json_as_dict
 from URLAnalyser.features.lexical import get_lexical
 from URLAnalyser.features.host import get_host
@@ -20,3 +22,10 @@ def get_train_test_features(dataset_name, train_set, test_set, feature_index, vo
     test_feats = extract_method(test_set, feature_index, load_json_as_dict(vocab_path))
     
     return train_feats, test_feats
+
+def scale_features(train, test):
+    scaler = StandardScaler().fit(train)
+    train = scaler.transform(train)
+    test = scaler.transform(test)
+
+    return train, test
