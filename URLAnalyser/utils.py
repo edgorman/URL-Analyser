@@ -1,5 +1,6 @@
 import os
 import json
+import pickle
 from importlib import import_module
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -37,14 +38,15 @@ def get_class(class_name):
 
     return getattr(import_module(path), name)
 
-def get_urls(path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "urls")):
+def get_urls(sample_rate=1, path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "urls")):
     if "whitelist.txt" in os.listdir(path) and "blacklist.txt" in os.listdir(path): 
         benign = pd.read_csv(os.path.join(path, "whitelist.txt"), header=None, names=["name"])
         benign['class'] = 0
         malicious = pd.read_csv(os.path.join(path, "blacklist.txt"), header=None, names=["name"])
         malicious['class'] = 1
         
-        return pd.concat([benign, malicious]).dropna()
+        urls = pd.concat([benign, malicious]).dropna()
+        return urls.sample(frac=sample_rate)
     return pd.DataFrame()
 
 def split_urls(url_df):
@@ -66,3 +68,9 @@ def bag_of_words(features, series, vocab):
 
 def safe_division(a, b):
     return 0 if b == 0 else a / b
+
+def save_model(model, filename, path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "models")):
+    pickle.dump(model, open(os.path.join(path, filename + ".pkl"), 'wb'))
+
+def load_model(filename, path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "models")):
+    return pickle.load(open(os.path.join(path, filename + ".pkl"), 'rb'))

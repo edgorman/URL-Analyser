@@ -1,6 +1,7 @@
 ### URLAnalyser ###
 URLAnalyser/data/urls/blacklist.txt
 URLAnalyser/data/urls/whitelist.txt
+*.pkl
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
