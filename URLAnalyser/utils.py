@@ -15,10 +15,10 @@ def is_valid_url(url):
     # TODO: testing once this is done
     return True
 
-def is_valid_model(models_dictionary, model_name, dataset_name, feature_index):
-    if model_name in models_dictionary.keys():
-        if dataset_name in models_dictionary[model_name]['featuresets'].keys():
-            if int(feature_index) in models_dictionary[model_name]['featuresets'][dataset_name]['indexes']:
+def is_valid_model(model_results_dict, model_name, dataset_name, feature_index):
+    if model_name in model_results_dict.keys():
+        if dataset_name in model_results_dict[model_name]['featuresets'].keys():
+            if int(feature_index) in model_results_dict[model_name]['featuresets'][dataset_name]['indexes']:
                 return True
     return False
 
@@ -69,8 +69,8 @@ def bag_of_words(features, series, vocab):
 def safe_division(a, b):
     return 0 if b == 0 else a / b
 
-def save_model(model, filename, path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "models")):
+def save_sklearn_model(model, filename, path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "models")):
     pickle.dump(model, open(os.path.join(path, filename + ".pkl"), 'wb'))
 
-def load_model(filename, path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "models")):
+def load_sklearn_model(filename, path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "models")):
     return pickle.load(open(os.path.join(path, filename + ".pkl"), 'rb'))

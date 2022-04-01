@@ -4,7 +4,9 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 import os
 import sys
 import argparse
+import colorama
 from URLAnalyser import app
+from URLAnalyser.log import Log
 from URLAnalyser.utils import generate_model_filename, load_json_as_dict
 from URLAnalyser.utils import is_valid_url
 from URLAnalyser.utils import is_valid_model
@@ -32,61 +34,55 @@ if __name__ == '__main__':
     # Note: Help and Version command are handled by argparse
     args = parser.parse_args(sys.argv[1:])
     
-    # Handle verbose-ness
-    stdout = sys.stdout
-    if not args.verbose:
-        sys.stdout = open(os.devnull, 'w')
+    # Handle verboseness
+    if args.verbose:
+        Log.verboseness = 1
+        colorama.init(convert=True)
     
     # Load model and feature dicts
     try:
-        models_dictionary = load_json_as_dict(os.path.join(DATA_DIRECTORY, "models", "results-dict.json"))
-        features_dictionary = load_json_as_dict(os.path.join(DATA_DIRECTORY, "features", "index-dict.json"))
+        model_results_dict = load_json_as_dict(os.path.join(DATA_DIRECTORY, "models", "results-dict.json"))
+        feat_index_dict = load_json_as_dict(os.path.join(DATA_DIRECTORY, "features", "index-dict.json"))
     except:
-        print(f"Error: Could not load 'data/models/results-dict.json' or 'data/features/index-dict.json'.")
-        exit(-1)
+        Log.error("Could not load either 'results-dict.json' or 'index-dict.json' in 'data/models/'.")
 
     # Validate chosen settings for model
-    if is_valid_model(models_dictionary, args.model, args.data, args.feats):
+    if is_valid_model(model_results_dict, args.model, args.data, args.feats):
         # Load data
         if args.url is None:
-            print(f"Info: Generating features for data type '{args.data}' and feature index '{args.feats}'.")
+            Log.info(f"Generating features for data type '{args.data}' and feature index '{args.feats}'.")
             x_train, x_test, y_train, y_test = app.load_data(args.data, args.feats)
 
         filename = generate_model_filename(args.model, args.data, args.feats)
 
         # Train model
         if args.train or not is_model_stored(args.model, args.data, args.feats):
-            print(f"Info: Training '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
-            model = app.train_model(args.model, filename, x_train, y_train, models_dictionary)
+            Log.info(f"Training '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
+            model = app.train_model(args.model, filename, x_train, y_train, model_results_dict)
         # Load model
         else:
-            print(f"Info: Loading '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
-            model = app.load_model(args.model, filename)
+            Log.info(f"Loading '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
+            model = app.load_model(filename)
         
         # Predict url
         if args.url is not None:
             # If url is valid
             if is_valid_url(args.url):
-                print(f"Info: Predicting url '{args.url}'.")
-                is_malicious = app.predict_url(args.url, model)
-
-                sys.stdout = stdout
-                result = "Malicious" if is_malicious else "Benign"
-                print(f"Info: The url '{args.url}' is predicted to be {result}")
+                Log.info(f"Predicting url '{args.url}'.")
+                result = "Malicious" if app.predict_url(args.url, model) else "Benign"
+                Log.result(f"The url '{args.url}' is predicted to be {result}")
             else:
-                print(f"Error: Could not load url '{args.url}'.")
-                exit(-1)
+                Log.error(f"Could not load url '{args.url}'.")
         # Test model
         else:
-            print(f"Info: Testing '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
+            Log.info(f"Testing '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
             model_results = app.test_model(model, x_test, y_test)
 
-            sys.stdout = stdout
-            print(f"Info: The scoring metrics for '{args.model}' are as follows:")
+            Log.info(f"Outputting reuslts to terminal.")
+            Log.result(f"The scoring metrics for '{args.model}' are as follows:")
             for metric, value in model_results.items():
-                print(f"\t{metric} -> {value}")
+                Log.result(f"-> {metric} = {value}")
     else:
-        print(f"Error: Could not load model '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
-        exit(-1)
+        Log.error(f"Could not load model '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
 
     

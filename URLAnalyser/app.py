@@ -1,7 +1,9 @@
+from URLAnalyser.log import Log
 from URLAnalyser.utils import get_class
 from URLAnalyser.utils import get_urls
 from URLAnalyser.utils import split_urls
-from URLAnalyser.utils import save_model
+from URLAnalyser.utils import save_sklearn_model
+from URLAnalyser.utils import load_sklearn_model
 from URLAnalyser.models.training import tune_hyperparameters
 from URLAnalyser.features.features import get_train_test_features
 
@@ -34,20 +36,20 @@ def load_data(dataset_name, feature_index):
     '''
     # Load URLs and split into train and test set
     x_train, x_test, y_train, y_test = split_urls(get_urls(0.05))
-    print(f"\tInfo: Successfully loaded urls")
+    Log.success(f"Loaded urls from 'data/urls'.")
 
     # Extract the features
     x_train, x_test = get_train_test_features(dataset_name, x_train, x_test, feature_index)
-    print(f"\tInfo: Successfully generated features")
+    Log.success(f"Generated features for '{dataset_name}'.")
 
     # Normalise features
     # TODO
-    print(f"\tInfo: Successfully normalised features")
+    # Log.info(f"Normalised features for '{dataset_name}'.")
 
     return x_train, x_test, y_train, y_test
 
 
-def train_model(model_name, filename, x_train, y_train, models_dictionary):
+def train_model(model_name, filename, x_train, y_train, model_results_dict):
     '''
         Train a model with the given configuration
 
@@ -56,43 +58,47 @@ def train_model(model_name, filename, x_train, y_train, models_dictionary):
             filename: The file name of the model in storage
             x_train: The features used in training
             y_train: The labels used in training
-            models_dictionary: Info on models
+            model_results_dict: Info on models
         
         Returns:
             model: The trained model
     '''
     # Instantiate object of model name
-    class_object = get_class(models_dictionary[model_name]['class'])
+    class_object = get_class(model_results_dict[model_name]['class'])
     model = class_object()
-    print(f"\tInfo: Successfully created model {model_name}")
+    Log.success(f"Created model '{model_name}'.")
 
     # Tune hyperparameters
-    model = tune_hyperparameters(model, models_dictionary[model_name]["hyperparameters"], x_train, y_train)
-    print(f"\tInfo: Successfully tuned hyperparameters for {model_name}")
+    model = tune_hyperparameters(model, model_results_dict[model_name]["hyperparameters"], x_train, y_train)
+    Log.success(f"Tuned hyperparameters for '{model_name}'.")
 
     # Train the model
     model.fit(x_train, y_train)
-    print(f"\tInfo: Successfully trained model {model_name}")
+    Log.success(f"Trained model '{model_name}'.")
 
     # Save the model
-    save_model(model, filename)
-    print(f"\tInfo: Successfully saved model to default folder")
+    save_sklearn_model(model, filename)
+    Log.success(f"Saved model as '{filename}' to default folder.")
 
     return model
 
-def load_model(model_name, dataset_name, feature_index):
+def load_model(filename):
     '''
         Load a model with the given configuration
     
         Parameters:
-            model_name: The model to load from storage
-            dataset_name: The dataset to load from storage
-            feature_index: The features to load from storage
+            filename: The file name of the model in storage
         
         Returns:
             model: The previously trained model
     '''
-    return None
+    try:
+        model = load_sklearn_model(filename)
+        Log.success(f"Loaded model from '{filename}'.")
+    except:
+        Log.error(f"Could not load model from '{filename}'.")
+    
+    return model
 
 def test_model(model, x_test, y_test):
     '''
@@ -106,6 +112,7 @@ def test_model(model, x_test, y_test):
         Returns:
             results: Results stored in a dict
     '''
+    Log.success(f"Generated results for model.")
     return {
         "f1-score": 0,
         "recall": 0
