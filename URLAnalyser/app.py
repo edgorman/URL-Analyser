@@ -2,8 +2,10 @@ from URLAnalyser.log import Log
 from URLAnalyser.utils import get_class
 from URLAnalyser.utils import get_urls
 from URLAnalyser.utils import split_urls
-from URLAnalyser.utils import save_sklearn_model
-from URLAnalyser.utils import load_sklearn_model
+from URLAnalyser.models.keras import save_keras_model
+from URLAnalyser.models.keras import load_keras_model
+from URLAnalyser.models.sklearn import save_sklearn_model
+from URLAnalyser.models.sklearn import load_sklearn_model
 from URLAnalyser.models.training import tune_hyperparameters
 from URLAnalyser.features.features import scale_features
 from URLAnalyser.features.features import get_train_test_features
@@ -11,7 +13,6 @@ from URLAnalyser.features.features import get_train_test_features
 
 '''
     TODO:
-    * Normalise features before sending to training
     * Handle saving and loading of keras models automatically
     * Add testing to new functions
     * Make sure function comments are correct
@@ -44,12 +45,12 @@ def load_data(dataset_name, feature_index):
 
     # Normalise features
     x_train, x_test = scale_features(x_train, x_test)
-    Log.info(f"Normalised features for '{dataset_name}'.")
+    Log.success(f"Normalised features for '{dataset_name}'.")
 
     return x_train, x_test, y_train, y_test
 
 
-def train_model(model_name, filename, x_train, y_train, model_results_dict):
+def train_model(model_name, filename, x_train, y_train, models_dict):
     '''
         Train a model with the given configuration
 
@@ -58,18 +59,18 @@ def train_model(model_name, filename, x_train, y_train, model_results_dict):
             filename: The file name of the model in storage
             x_train: The features used in training
             y_train: The labels used in training
-            model_results_dict: Info on models
+            models_dict: Info on models
         
         Returns:
             model: The trained model
     '''
     # Instantiate object of model name
-    class_object = get_class(model_results_dict[model_name]['class'])
+    class_object = get_class(models_dict[model_name]['class'])
     model = class_object()
     Log.success(f"Created model '{model_name}'.")
 
     # Tune hyperparameters
-    model = tune_hyperparameters(model, model_results_dict[model_name]["hyperparameters"], x_train, y_train)
+    model = tune_hyperparameters(model, models_dict[model_name]["hyperparameters"], x_train, y_train)
     Log.success(f"Tuned hyperparameters for '{model_name}'.")
 
     # Train the model
@@ -77,12 +78,13 @@ def train_model(model_name, filename, x_train, y_train, model_results_dict):
     Log.success(f"Trained model '{model_name}'.")
 
     # Save the model
-    save_sklearn_model(model, filename)
+    save_method = save_keras_model if models_dict[model_name]["isKeras"] else save_sklearn_model
+    save_method(model, filename)
     Log.success(f"Saved model as '{filename}' to default folder.")
 
     return model
 
-def load_model(filename):
+def load_model(filename, model_name, models_dict):
     '''
         Load a model with the given configuration
     
@@ -93,7 +95,9 @@ def load_model(filename):
             model: The previously trained model
     '''
     try:
-        model = load_sklearn_model(filename)
+        # Load the model
+        load_method = load_keras_model if models_dict[model_name]["isKeras"] else load_sklearn_model
+        model = load_method(filename)
         Log.success(f"Loaded model from '{filename}'.")
     except:
         Log.error(f"Could not load model from '{filename}'.")

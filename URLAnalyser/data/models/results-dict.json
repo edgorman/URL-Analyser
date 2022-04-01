@@ -2,6 +2,7 @@
     "svm": {
         "title": "Support Vector Machine",
         "class": "sklearn.svm.SVC",
+        "isKeras": false,
         "hyperparameters": {
             "C": [0.001, 0.01, 0.1, 1, 10],
             "kernel": ["linear", "poly", "rbf"],
@@ -26,6 +27,7 @@
     "rf": {
         "title": "Random Forest",
         "class": "sklearn.ensemble.RandomForestClassifier",
+        "isKeras": false,
         "hyperparameters": {
             "n_estimators": [200, 600, 1000, 1400, 1800],
             "max_features": ["sqrt", "log2", null],
@@ -51,6 +53,7 @@
     "pc": {
         "title": "Random Forest",
         "class": "sklearn.linear_model.Perceptron",
+        "isKeras": false,
         "hyperparameters": {
             "penalty": ["l2", "l1", "elasticnet", null],
             "alpha": [0.001, 0.001, 0.01, 0.1],
@@ -75,6 +78,7 @@
     "cnn": {
         "title": "Convolutional Neural Network",
         "class": "keras.Model",
+        "isKeras": true,
         "hyperparameters": {
             "first_activation": ["sigmoid", "elu"],
             "second_activation": ["sigmoid", "elu"],

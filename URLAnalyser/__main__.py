@@ -41,13 +41,13 @@ if __name__ == '__main__':
     
     # Load model and feature dicts
     try:
-        model_results_dict = load_json_as_dict(os.path.join(DATA_DIRECTORY, "models", "results-dict.json"))
+        models_dict = load_json_as_dict(os.path.join(DATA_DIRECTORY, "models", "results-dict.json"))
         feat_index_dict = load_json_as_dict(os.path.join(DATA_DIRECTORY, "features", "index-dict.json"))
     except:
         Log.error("Could not load either 'results-dict.json' or 'index-dict.json' in 'data/models/'.")
 
     # Validate chosen settings for model
-    if is_valid_model(model_results_dict, args.model, args.data, args.feats):
+    if is_valid_model(models_dict, args.model, args.data, args.feats):
         # Load data
         if args.url is None:
             Log.info(f"Generating features for data type '{args.data}' and feature index '{args.feats}'.")
@@ -58,11 +58,11 @@ if __name__ == '__main__':
         # Train model
         if args.train or not is_model_stored(args.model, args.data, args.feats):
             Log.info(f"Training '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
-            model = app.train_model(args.model, filename, x_train, y_train, model_results_dict)
+            model = app.train_model(args.model, filename, x_train, y_train, models_dict)
         # Load model
         else:
             Log.info(f"Loading '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
-            model = app.load_model(filename)
+            model = app.load_model(filename, args.model, models_dict)
         
         # Predict url
         if args.url is not None:
