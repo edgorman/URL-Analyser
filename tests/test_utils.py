@@ -8,14 +8,12 @@ from URLAnalyser.utils import is_valid_url
 from URLAnalyser.utils import is_valid_model
 from URLAnalyser.utils import is_model_stored
 from URLAnalyser.utils import get_class
-from URLAnalyser.utils import get_urls
 from URLAnalyser.utils import split_urls
 from URLAnalyser.utils import safe_division
 
 
-def test_load_json_as_dict():
-    example_filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "model-results.json")
-    loaded_dict = load_json_as_dict(example_filename)
+def test_load_json_as_dict(results_dict_path):
+    loaded_dict = load_json_as_dict(results_dict_path)
 
     assert type(loaded_dict) is dict
     assert "svm" in loaded_dict.keys()
@@ -35,9 +33,8 @@ def test_is_valid_url(url, expected):
     ("svm", "", "0", False),
     ("svm", "lexical", "-1", False),
 ])
-def test_is_valid_model(model_name, dataset_name, feature_index, expected):
-    model_json = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "model-results.json")
-    model_dict = load_json_as_dict(model_json)
+def test_is_valid_model(model_name, dataset_name, feature_index, expected, results_dict_path):
+    model_dict = load_json_as_dict(results_dict_path)
 
     assert is_valid_model(model_dict, model_name, dataset_name, feature_index) == expected
 
@@ -62,16 +59,12 @@ def test_is_model_stored(model_name, dataset_name, feature_index, expected):
 def test_get_class(class_name, expected):
     assert type(get_class(class_name)) == type(expected)
 
-def test_get_urls():
-    urls = get_urls(os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "urls"))
-    assert type(urls) is pd.DataFrame
-    assert "name" in urls.columns
-    assert "class" in urls.columns
-    assert len(urls.index) == 2
+def test_get_urls(url_df):
+    assert type(url_df) is pd.DataFrame
+    assert all([col in ["name", "class"] for col in url_df.columns])
 
-def test_split_urls():
-    urls = get_urls(os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "urls"))
-    train_x, test_x, train_y, test_y = split_urls(urls)
+def test_split_urls(url_df):
+    train_x, test_x, train_y, test_y = split_urls(url_df)
     assert len(train_x) + len(test_x) == 2
     assert len(train_y) + len(test_y) == 2
 

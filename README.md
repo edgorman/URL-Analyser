@@ -38,7 +38,7 @@ python -m URLAnalyser -m svm -d content -f 0
 
 Run the testing scripts in the base directory:
 ```
-python -m pytest
+python -m pytest --cov=URLAnalyser tests/
 ```
 
 Add the flag `--disable-pytest-warnings` to remove Keras warnings.

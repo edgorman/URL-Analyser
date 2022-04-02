@@ -2,10 +2,10 @@ from URLAnalyser.log import Log
 from URLAnalyser.utils import get_class
 from URLAnalyser.utils import get_urls
 from URLAnalyser.utils import split_urls
-from URLAnalyser.models.keras import save_keras_model
-from URLAnalyser.models.keras import load_keras_model
-from URLAnalyser.models.sklearn import save_sklearn_model
-from URLAnalyser.models.sklearn import load_sklearn_model
+from URLAnalyser.models.keras import save_model as save_keras
+from URLAnalyser.models.keras import load_model as load_keras
+from URLAnalyser.models.sklearn import save_model as save_sklearn
+from URLAnalyser.models.sklearn import load_model as load_sklearn
 from URLAnalyser.models.training import tune_hyperparameters
 from URLAnalyser.features.features import scale_features
 from URLAnalyser.features.features import get_train_test_features
@@ -13,7 +13,6 @@ from URLAnalyser.features.features import get_train_test_features
 
 '''
     TODO:
-    * Handle saving and loading of keras models automatically
     * Add testing to new functions
     * Make sure function comments are correct
     * Implement host and content data requests from old code
@@ -78,7 +77,7 @@ def train_model(model_name, filename, x_train, y_train, models_dict):
     Log.success(f"Trained model '{model_name}'.")
 
     # Save the model
-    save_method = save_keras_model if models_dict[model_name]["isKeras"] else save_sklearn_model
+    save_method = save_keras if models_dict[model_name]["isKeras"] else save_sklearn
     save_method(model, filename)
     Log.success(f"Saved model as '{filename}' to default folder.")
 
@@ -96,7 +95,7 @@ def load_model(filename, model_name, models_dict):
     '''
     try:
         # Load the model
-        load_method = load_keras_model if models_dict[model_name]["isKeras"] else load_sklearn_model
+        load_method = load_keras if models_dict[model_name]["isKeras"] else load_sklearn
         model = load_method(filename)
         Log.success(f"Loaded model from '{filename}'.")
     except:
