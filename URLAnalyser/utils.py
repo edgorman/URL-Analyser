@@ -1,9 +1,8 @@
 import os
 import json
-import pickle
 from importlib import import_module
+
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 
 
@@ -37,22 +36,6 @@ def get_class(class_name):
     name = paths[-1]
 
     return getattr(import_module(path), name)
-
-def get_urls(sample_rate=1, path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "urls")):
-    if "whitelist.txt" in os.listdir(path) and "blacklist.txt" in os.listdir(path): 
-        benign = pd.read_csv(os.path.join(path, "whitelist.txt"), header=None, names=["name"])
-        benign['class'] = 0
-        malicious = pd.read_csv(os.path.join(path, "blacklist.txt"), header=None, names=["name"])
-        malicious['class'] = 1
-        
-        urls = pd.concat([benign, malicious]).dropna()
-        return urls.sample(frac=sample_rate)
-    return pd.DataFrame()
-
-def split_urls(url_df):
-    y = url_df['class']
-    x = url_df.drop(['class'], axis=1)
-    return train_test_split(x, y, test_size=0.2)
 
 def bag_of_words(features, series, vocab):
     if len(vocab) == 0:

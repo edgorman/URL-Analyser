@@ -1,7 +1,7 @@
 from URLAnalyser.log import Log
 from URLAnalyser.utils import get_class
-from URLAnalyser.utils import get_urls
-from URLAnalyser.utils import split_urls
+from URLAnalyser.data.data import load_url_data
+from URLAnalyser.data.data import get_train_test_data
 from URLAnalyser.models.keras import save_model as save_keras
 from URLAnalyser.models.keras import load_model as load_keras
 from URLAnalyser.models.sklearn import save_model as save_sklearn
@@ -35,11 +35,12 @@ def load_data(dataset_name, feature_index):
             y_test: The labels used in testing
     '''
     # Load URLs and split into train and test set
-    x_train, x_test, y_train, y_test = split_urls(get_urls(0.05))
-    Log.success(f"Loaded urls from 'data/urls'.")
+    url_data = load_url_data(dataset_name, 0.05)
+    x_train, x_test, y_train, y_test = get_train_test_data(url_data)
+    Log.success(f"Loaded url data for '{dataset_name}'.")
 
     # Extract the features
-    x_train, x_test = get_train_test_features(dataset_name, x_train, x_test, feature_index)
+    x_train, x_test = get_train_test_features(x_train, x_test, dataset_name, feature_index)
     Log.success(f"Generated features for '{dataset_name}'.")
 
     # Normalise features

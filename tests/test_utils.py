@@ -59,12 +59,12 @@ def test_is_model_stored(model_name, dataset_name, feature_index, expected):
 def test_get_class(class_name, expected):
     assert type(get_class(class_name)) == type(expected)
 
-def test_get_urls(url_df):
-    assert type(url_df) is pd.DataFrame
-    assert all([col in ["name", "class"] for col in url_df.columns])
+def test_get_urls(url_dataframe):
+    assert type(url_dataframe) is pd.DataFrame
+    assert all([col in ["name", "class"] for col in url_dataframe.columns])
 
-def test_split_urls(url_df):
-    train_x, test_x, train_y, test_y = split_urls(url_df)
+def test_split_urls(url_dataframe):
+    train_x, test_x, train_y, test_y = split_urls(url_dataframe)
     assert len(train_x) + len(test_x) == 2
     assert len(train_y) + len(test_y) == 2
 
