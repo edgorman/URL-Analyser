@@ -4,7 +4,7 @@ import time
 import datetime
 import pandas as pd
 import whois
-from pyping import ping
+from pythonping import ping
 from sklearn.model_selection import train_test_split
 
 from URLAnalyser.utils import is_url_valid
