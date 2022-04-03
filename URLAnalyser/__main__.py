@@ -8,8 +8,8 @@ import colorama
 from URLAnalyser import app
 from URLAnalyser.log import Log
 from URLAnalyser.utils import generate_model_filename, load_json_as_dict
-from URLAnalyser.utils import is_valid_url
-from URLAnalyser.utils import is_valid_model
+from URLAnalyser.utils import is_url_valid
+from URLAnalyser.utils import is_model_valid
 from URLAnalyser.utils import is_model_stored
 
 
@@ -47,7 +47,7 @@ if __name__ == '__main__':
         Log.error("Could not load either 'results-dict.json' or 'index-dict.json' in 'data/models/'.")
 
     # Validate chosen settings for model
-    if is_valid_model(models_dict, args.model, args.data, args.feats):
+    if is_model_valid(models_dict, args.model, args.data, args.feats):
         # Load data
         if args.url is None:
             Log.info(f"Generating features for data type '{args.data}' and feature index '{args.feats}'.")
@@ -67,7 +67,7 @@ if __name__ == '__main__':
         # Predict url
         if args.url is not None:
             # If url is valid
-            if is_valid_url(args.url):
+            if is_url_valid(args.url):
                 Log.info(f"Predicting url '{args.url}'.")
                 result = "Malicious" if app.predict_url(args.url, model) else "Benign"
                 Log.result(f"The url '{args.url}' is predicted to be {result}")

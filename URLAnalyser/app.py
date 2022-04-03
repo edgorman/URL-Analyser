@@ -17,6 +17,8 @@ from URLAnalyser.features.features import get_train_test_features
     * Make sure function comments are correct
     * Implement host and content data requests from old code
     * Maybe add a flag for how much data to use (default 5%)
+    * Add metric evaluation methods
+    * Make sure CNN works properly
 '''
 
 
