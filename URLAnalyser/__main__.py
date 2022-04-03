@@ -21,6 +21,9 @@ if __name__ == '__main__':
     ''' 
         This script processes input from user and decides which top-level function to run in app.py.
     '''
+    # Initialise coloured text
+    colorama.init(convert=True)
+
     # Parse input arguments
     parser = argparse.ArgumentParser(prog="urlanalyser", description="Predict whether a URL is malicious using machine learning.")
     parser.add_argument('-u', action='store', dest='url', help="url to test")
@@ -37,7 +40,6 @@ if __name__ == '__main__':
     # Handle verboseness
     if args.verbose:
         Log.verboseness = 1
-        colorama.init(convert=True)
     
     # Load model and feature dicts
     try:
@@ -62,21 +64,21 @@ if __name__ == '__main__':
         # Load model
         else:
             Log.info(f"Loading '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
-            model = app.load_model(filename, args.model, models_dict)
+            model = app.load_model(filename, models_dict[args.model]["isKeras"])
         
         # Predict url
         if args.url is not None:
             # If url is valid
             if is_url_valid(args.url):
                 Log.info(f"Predicting url '{args.url}'.")
-                result = "Malicious" if app.predict_url(args.url, model) else "Benign"
+                result = "Malicious" if app.predict_url(model, models_dict[args.model]["isKeras"], args.url) else "Benign"
                 Log.result(f"The url '{args.url}' is predicted to be {result}")
             else:
                 Log.error(f"Could not load url '{args.url}'.")
         # Test model
         else:
             Log.info(f"Testing '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
-            model_results = app.test_model(model, x_test, y_test)
+            model_results = app.test_model(model, models_dict[args.model]["isKeras"], x_test, y_test)
 
             Log.info(f"Outputting reuslts to terminal.")
             Log.result(f"The scoring metrics for '{args.model}' are as follows:")

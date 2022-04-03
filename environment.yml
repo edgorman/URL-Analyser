@@ -163,5 +163,5 @@ dependencies:
   - zipp=3.6.0=pyhd8ed1ab_0
   - zlib=1.2.11=h8ffe710_1013
   - pip:
-    - pyping==0.0.6
+    - pythonping==1.1.1
 prefix: C:\Users\edgor\anaconda3\envs\URLAnalyser
