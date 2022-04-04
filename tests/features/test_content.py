@@ -2,6 +2,7 @@ import pytest
 from URLAnalyser.features.content import average_word_length
 from URLAnalyser.features.content import average_js_length
 
+
 @pytest.mark.parametrize("words,expected", [
     ("the quick brown fox jumped over the lazy dog", 36/float(9)),
     ("lorem ipsum...", 13/float(2)),

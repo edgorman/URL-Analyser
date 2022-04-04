@@ -1,19 +1,20 @@
+import requests
 
+
+def get_content(url):
+    try:
+        return requests.get("http://" + url, timeout=(0.1, 10))
+    except:
+        try:
+            return requests.get("https://" + url, timeout=(0.1, 10))
+        except:
+            return None
 
 def content_type(response):
-    try:
-        return response.headers['Content-Type']
-    except:
-        return "NA"
+    return response.headers['Content-Type'] if response is not None else None
 
-def content_redirect(obj):
-    try:
-        return obj.is_redirect
-    except:
-        return None
+def content_redirect(response):
+    return response.is_redirect if response is not None else None
 
-def content_content(obj):
-    try:
-        return obj.content
-    except:
-        return "NA"
+def content_content(response):
+    return response.content.decode("utf-8") if response is not None else None
