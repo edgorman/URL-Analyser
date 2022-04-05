@@ -1,4 +1,3 @@
-import string
 import pytest
 import requests
 from URLAnalyser.data.content import get_content

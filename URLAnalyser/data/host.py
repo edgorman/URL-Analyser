@@ -11,43 +11,36 @@ def get_host(url):
     except:
         return None
 
-def host_registrar(obj, typ):
-    try:
-        return obj[typ]
-    except:
+def host_registrar(response):
+    return response['registrar'] if response is not None else None
+
+def host_country(response):
+    return response['country'] if response is not None else None
+
+def host_server_count(response):
+    return len(response['name_servers']) if response is not None else 0
+
+def host_date(response, date_type, date_attr):
+    if response is None:
         return None
 
-def host_country(obj, typ):
-    try:
-        return obj[typ]
-    except:
+    if isinstance(response[date_type], list):
+        response[date_type] = response[date_type][0]
+
+    if not isinstance(response[date_type], datetime.datetime):
         return None
 
-def host_server(obj, typ):
-    try:
-        return len(obj[typ])
-    except:
-        return 0
-
-def host_date(obj, typ, attr_str):
-    try:
-        d = obj[typ]
-    except:
-        return None
-
-    if isinstance(obj[typ], list):
-        obj[typ] = obj[typ][0]
-
-    if not isinstance(obj[typ], datetime):
-        return None
-
-    return getattr(obj[typ], attr_str)
+    return getattr(response[date_type], date_attr)
 
 def host_speed(url):
     t1 = time.perf_counter()
-    _ = get_host(url)
-    return time.perf_counter() - t1
+    response = get_host(url)
+    t2 = time.perf_counter()
+
+    return t2 - t1 if response is not None else -1
 
 def host_latency(url):
-    response = ping("google.com", size=40, count=10, timeout=1)
-    return response.rtt_avg_ms
+    try:
+        return ping(url, count=10, timeout=1).rtt_avg_ms
+    except:
+        return -1
