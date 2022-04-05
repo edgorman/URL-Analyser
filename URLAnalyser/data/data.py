@@ -4,6 +4,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 from URLAnalyser.utils import is_url_valid
+from URLAnalyser.data.host import get_host
+from URLAnalyser.data.content import get_content
 
 
 def _load_file(filename, path):
@@ -22,22 +24,38 @@ def _load_lexical(sample_rate, path):
     return None
 
 def _load_host(sample_rate, path):
-    url_host = _load_lexical(sample_rate, path)
-    if url_host is not None:
-        url_host = url_host[is_url_valid(url_host.name)]
+    # Initialise host df with lexical values
+    host = _load_lexical(sample_rate, path)
+    if host is None:
+        return None
+    
+    # Remove urls that are not valid
+    host = host[is_url_valid(host.name)]
 
-        # TODO: Get host related data for remaining urls
-        return url_host
-    return None
+    # Extract host based information from sites
+    host["info"] = host['name'].apply(lambda x: get_host(x))
+    # TODO: apply extraction methods
+
+    # Remove extra info column at the end
+    host.drop(["info"], axis=1)
+    return host
 
 def _load_content(sample_rate, path):
-    url_cont = _load_lexical(sample_rate, path)
-    if url_cont is not None:
-        url_cont = url_cont[is_url_valid(url_cont.name)]
+    # Initialise content df with lexical values
+    content = _load_lexical(sample_rate, path)
+    if content is None:
+        return None
+    
+    # Remove urls that are not valid
+    content = content[is_url_valid(content.name)]
 
-        # TODO: Get content related data for remaining urls
-        return url_cont
-    return None
+    # Extract content based information from sites
+    content["info"] = content['name'].apply(lambda x: get_content(x))
+    # TODO: apply extraction methods
+
+    # Remove extra info column at the end
+    content.drop(["info"], axis=1)
+    return content
 
 def _load_method(dataset_name):
     if dataset_name == 'lexical': return _load_lexical
