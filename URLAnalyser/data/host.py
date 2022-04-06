@@ -20,7 +20,7 @@ def host_country(response):
 def host_server_count(response):
     return len(response['name_servers']) if response is not None else 0
 
-def host_date(response, date_type, date_attr):
+def host_date(response, date_type):
     if response is None:
         return None
 
@@ -30,7 +30,7 @@ def host_date(response, date_type, date_attr):
     if not isinstance(response[date_type], datetime.datetime):
         return None
 
-    return getattr(response[date_type], date_attr)
+    return response[date_type]
 
 def host_speed(url):
     t1 = time.perf_counter()

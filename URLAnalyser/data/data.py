@@ -4,8 +4,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 from URLAnalyser.utils import is_url_valid
-from URLAnalyser.data.host import get_host
-from URLAnalyser.data.content import get_content
+from URLAnalyser.data.host import get_host, host_registrar, host_country, host_server_count, host_date, host_speed, host_latency
+from URLAnalyser.data.content import get_content, content_type, content_redirect, content_content
 
 
 def _load_file(filename, path):
@@ -34,7 +34,14 @@ def _load_host(sample_rate, path):
 
     # Extract host based information from sites
     host["info"] = host['name'].apply(lambda x: get_host(x))
-    # TODO: apply extraction methods
+    host["registrar"] = host['info'].apply(lambda x: host_registrar(x))
+    host["location"] = host['info'].apply(lambda x: host_country(x))
+    host["server_count"] = host['info'].apply(lambda x: host_server_count(x))
+    host["creation_date"] = host['info'].apply(lambda x: host_date(x, "creation_date"))
+    host["updated_date"] = host['info'].apply(lambda x: host_date(x, "updated_date"))
+    host["expiration_date"] = host['info'].apply(lambda x: host_date(x, "expiration_date"))
+    host["speed"] = host['name'].apply(lambda x: host_speed(x))
+    host["latency"] = host['name'].apply(lambda x: host_latency(x))
 
     # Remove extra info column at the end
     host.drop(["info"], axis=1)
