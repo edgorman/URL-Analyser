@@ -10,24 +10,25 @@ def get_host(urls, index, vocab=defaultdict()):
         features = bag_of_words(features, urls['location'], vocab['location'])
     
     if index == '0' or index == '2':
-        features.insert(0, 'serverCount', urls['serverCount'], True)
+        features.insert(0, 'server_count', urls['server_count'], True)
 
     if index == '0' or index == '3':
         features = bag_of_words(features, urls['registrar'], vocab['lexical'])
 
     if index == '0' or index == '4':
-        features.insert(0, 'creationMonth', urls['creationMonth'], True)
-        features.insert(0, 'creationYear', urls['creationYear'], True)
+        features.insert(0, 'creation_month', urls['creation_date'].month, True)
+        features.insert(0, 'creation_year', urls['creation_date'].year, True)
 
     if index == '0' or index == '5':
-        features.insert(0, 'updatedMonth', urls['updatedMonth'], True)
-        features.insert(0, 'updatedYear', urls['updatedYear'], True)
+        features.insert(0, 'updated_month', urls['updated_date'].month, True)
+        features.insert(0, 'updated_year', urls['updated_date'].year, True)
 
     if index == '0' or index == '6':
-        features.insert(0, 'expirationMonth', urls['expirationMonth'], True)
-        features.insert(0, 'expirationYear', urls['expirationYear'], True)
+        features.insert(0, 'expiration_month', urls['expiration_date'].month, True)
+        features.insert(0, 'expiration_year', urls['expiration_date'].year, True)
 
     if index == '0' or index == '7':
+        features.insert(0, 'speed', urls['speed'], True)
         features.insert(0, 'latency', urls['latency'], True)
 
     return features

@@ -58,10 +58,6 @@ def test_is_model_stored(model_name, dataset_name, feature_index, expected):
 def test_get_class(class_name, expected):
     assert type(get_class(class_name)) == type(expected)
 
-def test_get_urls(url_dataframe):
-    assert type(url_dataframe) is pd.DataFrame
-    assert all([col in ["name", "class"] for col in url_dataframe.columns])
-
 def test_bag_of_words():
     series = pd.Series([
         'This is the first document.',
