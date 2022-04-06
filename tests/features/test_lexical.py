@@ -13,13 +13,15 @@ from URLAnalyser.features.lexical import char_count
 def test_label_count(url, expected):
     assert label_count(url) == expected
 
+
 @pytest.mark.parametrize("url,expected", [
-    ("google.com", 9/float(2)),
-    ("edgorman.github.io", 16/float(3)),
-    ("longer.url/with?path=value", 25/float(2))
+    ("google.com", 9 / float(2)),
+    ("edgorman.github.io", 16 / float(3)),
+    ("longer.url/with?path=value", 25 / float(2))
 ])
-def test_label_count(url, expected):
+def test_average_label_length(url, expected):
     assert average_label_length(url) == expected
+
 
 @pytest.mark.parametrize("url,list,expected", [
     ("abcdefg.com", string.ascii_letters, 10),

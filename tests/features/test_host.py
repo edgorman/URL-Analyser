@@ -9,5 +9,5 @@ from URLAnalyser.features.host import get_host
 ])
 def test_get_host(urls, index, vocab, expected):
     features = get_host(urls, index, vocab)
-    assert type(features) is pd.DataFrame
+    assert isinstance(features, pd.DataFrame)
     assert len(features.columns) == expected
