@@ -76,7 +76,7 @@ def _load_method(dataset_name):
     if dataset_name == 'host': return _load_host
     if dataset_name == 'content': return _load_content
 
-def load_url_data(dataset_name, sample_rate=1, path=os.path.dirname(os.path.realpath(__file__))):
+def load_url_data(dataset_name, sample_rate=1, path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "urls")):
     load_method = _load_method(dataset_name)
 
     url_data = load_method(sample_rate, path)
