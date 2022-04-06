@@ -16,19 +16,16 @@ def get_host(urls, index, vocab=defaultdict()):
         features = bag_of_words(features, urls['registrar'], vocab['lexical'])
 
     if index == '0' or index == '4':
-        # TODO: change to extract month and year
-        features.insert(0, 'creation_month', urls['creation_date'], True)
-        features.insert(0, 'creation_year', urls['creation_date'], True)
+        features.insert(0, 'creation_month', urls['creation_date'].month, True)
+        features.insert(0, 'creation_year', urls['creation_date'].year, True)
 
     if index == '0' or index == '5':
-        # TODO: change to extract month and year
-        features.insert(0, 'updated_month', urls['updated_date'], True)
-        features.insert(0, 'updated_year', urls['updated_date'], True)
+        features.insert(0, 'updated_month', urls['updated_date'].month, True)
+        features.insert(0, 'updated_year', urls['updated_date'].year, True)
 
     if index == '0' or index == '6':
-        # TODO: change to extract month and year
-        features.insert(0, 'expiration_month', urls['expiration_date'], True)
-        features.insert(0, 'expiration_year', urls['expiration_date'], True)
+        features.insert(0, 'expiration_month', urls['expiration_date'].month, True)
+        features.insert(0, 'expiration_year', urls['expiration_date'].year, True)
 
     if index == '0' or index == '7':
         features.insert(0, 'speed', urls['speed'], True)

@@ -1,13 +1,13 @@
 import time
 import datetime
 
-import whois
+from whois import whois
 from pythonping import ping
 
 
 def get_host(url):
     try:
-        return whois.whois(url)
+        return whois(url)
     except:
         return None
 
@@ -15,13 +15,13 @@ def host_registrar(response):
     return response['registrar'] if response is not None else None
 
 def host_country(response):
-    return response['country'] if response is not None else None
+    return response['country'] if response is not None and 'country' in response else None
 
 def host_server_count(response):
-    return len(response['name_servers']) if response is not None else 0
+    return len(response['name_servers']) if response is not None and 'country' in response else 0
 
 def host_date(response, date_type):
-    if response is None:
+    if response is None or date_type not in response:
         return None
 
     if isinstance(response[date_type], list):

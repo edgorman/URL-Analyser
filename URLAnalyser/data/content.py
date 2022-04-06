@@ -17,4 +17,4 @@ def content_redirect(response):
     return response.is_redirect if response is not None else None
 
 def content_content(response):
-    return response.content.decode("utf-8") if response is not None else None
+    return response.content.decode(response.apparent_encoding) if response is not None else None
