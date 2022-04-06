@@ -20,7 +20,7 @@ def load_data(dataset_name, feature_index):
         Parameters:
             dataset_name: The dataset to use in training
             feature_index: The features to use in training
-        
+
         Returns
             x_train: The features used in training
             x_test: The features used in testing
@@ -33,7 +33,8 @@ def load_data(dataset_name, feature_index):
     Log.success(f"Loaded url data for '{dataset_name}'.")
 
     # Extract the features
-    x_train, x_test = get_train_test_features(x_train, x_test, dataset_name, feature_index)
+    x_train, x_test = get_train_test_features(
+        x_train, x_test, dataset_name, feature_index)
     Log.success(f"Generated features for '{dataset_name}'.")
 
     # Normalise features
@@ -53,7 +54,7 @@ def train_model(model_name, filename, x_train, y_train, models_dict):
             x_train: The features used in training
             y_train: The labels used in training
             models_dict: Info on models
-        
+
         Returns:
             model: The trained model
     '''
@@ -63,7 +64,11 @@ def train_model(model_name, filename, x_train, y_train, models_dict):
     Log.success(f"Created model '{model_name}'.")
 
     # Tune hyperparameters
-    model = tune_hyperparameters(model, models_dict[model_name]["hyperparameters"], x_train, y_train)
+    model = tune_hyperparameters(
+        model,
+        models_dict[model_name]["hyperparameters"],
+        x_train,
+        y_train)
     Log.success(f"Tuned hyperparameters for '{model_name}'.")
 
     # Train the model
@@ -77,13 +82,14 @@ def train_model(model_name, filename, x_train, y_train, models_dict):
 
     return model
 
+
 def load_model(filename, isKeras):
     '''
         Load a model with the given configuration
-    
+
         Parameters:
             filename: The file name of the model in storage
-        
+
         Returns:
             model: The previously trained model
     '''
@@ -91,10 +97,11 @@ def load_model(filename, isKeras):
         load_method = load_keras if isKeras else load_sklearn
         model = load_method(filename)
         Log.success(f"Loaded model from '{filename}'.")
-    except:
+    except BaseException:
         Log.error(f"Could not load model from '{filename}'.")
-    
+
     return model
+
 
 def test_model(model, isKeras, x_test, y_test):
     '''
@@ -105,17 +112,18 @@ def test_model(model, isKeras, x_test, y_test):
             isKeras: Whether the model uses Keras
             x_test: The labels used in training
             y_test: The labels used in testing
-        
+
         Returns:
             results: Results stored in a dict
     '''
     predictions = generate_predictions(model, isKeras, x_test)
-    Log.success(f"Generated predictions from tests.")
+    Log.success("Generated predictions from tests.")
 
     results = calculate_metrics(predictions, y_test)
-    Log.success(f"Generated results for model.")
+    Log.success("Generated results for model.")
 
     return results
+
 
 def predict_url(model, isKeras, url):
     '''
@@ -125,8 +133,8 @@ def predict_url(model, isKeras, url):
             model: The model to use in prediction
             isKeras: Whether the model uses Keras
             url: The URL name to test
-        
+
         Returns:
-            bool: Whether the URL is malicious 
+            bool: Whether the URL is malicious
     '''
     return False

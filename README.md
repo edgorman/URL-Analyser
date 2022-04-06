@@ -39,9 +39,11 @@ python -m URLAnalyser -m svm -d content -f 0
 Run the testing scripts in the base directory:
 ```
 python -m pytest --cov=URLAnalyser tests/
+python -m flake8 . --max-line-length=120
+python -m autopep8 --in-place --aggressive --recursive .
 ```
 
-Add the flag `--disable-pytest-warnings` to remove Keras warnings.
+Add the flag `--disable-pytest-warnings` to pytest to remove Keras warnings.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

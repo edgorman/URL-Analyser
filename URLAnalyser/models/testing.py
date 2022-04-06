@@ -11,6 +11,7 @@ def generate_predictions(model, isKeras, x_test):
         predictions = (predictions > 0.5).astype(np.int)
     return predictions
 
+
 def calculate_metrics(predictions, true_values):
     return {
         'accuracy': round(accuracy_score(true_values, predictions), 3),

@@ -1,7 +1,6 @@
 from colorama import Fore
 
 
-
 class Log:
     # Determines how verbose the log messages should be
     # 0 = Default, show only results and error messages
@@ -24,7 +23,7 @@ class Log:
         if Log.verboseness > 0:
             print(Fore.RED + "[ERROR]: " + message)
         exit(-1)
-    
+
     @staticmethod
     def result(message):
         print(Fore.WHITE + message)
