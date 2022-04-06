@@ -45,6 +45,12 @@ python -m autopep8 --in-place --aggressive --recursive .
 
 Add the flag `--disable-pytest-warnings` to pytest to remove Keras warnings.
 
+To update the environment and requirement files, run:
+```
+conda env export > environment.yml
+pip list --format=freeze > requirements.txt
+```
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
