@@ -59,6 +59,13 @@ if __name__ == '__main__':
         help="train this model's parameters (default: false)",
         default=False)
     parser.add_argument(
+        '-no-cache',
+        action='store',
+        dest='cache',
+        help="use cached data",
+        default=True
+    )
+    parser.add_argument(
         '-verbose',
         action='store_true',
         dest='verbose',
@@ -93,7 +100,7 @@ if __name__ == '__main__':
             Log.info(
                 f"Generating features for data type '{args.data}' and feature index '{args.feats}'.")
             x_train, x_test, y_train, y_test = app.load_data(
-                args.data, args.feats)
+                args.data, args.feats, args.cache)
 
         filename = generate_model_filename(args.model, args.data, args.feats)
 

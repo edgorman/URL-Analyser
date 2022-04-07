@@ -29,7 +29,11 @@ def _load_file(filename, path):
         return df
 
 
-def _load_lexical(sample_rate, path):
+def _save_file(df, filename, path):
+    df.to_csv(os.path.join(path, filename), index=False)
+
+
+def _load_lexical(sample_rate, use_cache, path):
     if "whitelist.txt" in os.listdir(
             path) and "blacklist.txt" in os.listdir(path):
         benign = _load_file("whitelist.txt", path)
@@ -46,7 +50,12 @@ def _load_lexical(sample_rate, path):
     return None
 
 
-def _load_host(sample_rate, path):
+def _load_host(sample_rate, use_cache, path):
+    # If cache enabled, try load from their first
+    if use_cache and "host.csv" in os.listdir(path):
+        host = _load_file("host.csv", path)
+        return host
+
     # Initialise host df with lexical values
     host = _load_lexical(sample_rate, path)
     if host is None:
@@ -74,7 +83,12 @@ def _load_host(sample_rate, path):
     return host
 
 
-def _load_content(sample_rate, path):
+def _load_content(sample_rate, use_cache, path):
+    # If cache enabled, try load from their first
+    if use_cache and "host.csv" in os.listdir(path):
+        host = _load_file("host.csv", path)
+        return host
+
     # Initialise content df with lexical values
     content = _load_lexical(sample_rate, path)
     if content is None:
@@ -104,11 +118,13 @@ def _load_method(dataset_name):
         return _load_content
 
 
-def load_url_data(dataset_name, sample_rate=1, path=os.path.join(
+def load_url_data(dataset_name, sample_rate=1, use_cache=True, path=os.path.join(
         os.path.dirname(os.path.realpath(__file__)), "urls")):
     load_method = _load_method(dataset_name)
 
-    url_data = load_method(sample_rate, path)
+    url_data = load_method(sample_rate, use_cache, path)
+    _save_file(url_data, dataset_name + ".csv", path)
+
     url_data.drop(["is_valid"], inplace=True, axis=1)
     url_data.reset_index(inplace=True, drop=True)
 

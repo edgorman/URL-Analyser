@@ -13,13 +13,14 @@ from URLAnalyser.models.testing import generate_predictions
 from URLAnalyser.models.testing import calculate_metrics
 
 
-def load_data(dataset_name, feature_index):
+def load_data(dataset_name, feature_index, use_cache):
     '''
         Load the data with the given configuration
 
         Parameters:
             dataset_name: The dataset to use in training
             feature_index: The features to use in training
+            use_cache: Use cached data if available
 
         Returns
             x_train: The features used in training
@@ -28,7 +29,7 @@ def load_data(dataset_name, feature_index):
             y_test: The labels used in testing
     '''
     # Load URLs and split into train and test set
-    url_data = load_url_data(dataset_name, 0.05)
+    url_data = load_url_data(dataset_name, 0.05, use_cache)
     x_train, x_test, y_train, y_test = get_train_test_data(url_data)
     Log.success(f"Loaded url data for '{dataset_name}'.")
 
