@@ -20,5 +20,4 @@ def content_redirect(response):
 
 
 def content_content(response):
-    return response.content.decode(
-        response.apparent_encoding) if response is not None else None
+    return response.content.decode(response.apparent_encoding)[:10000] if response is not None else None
