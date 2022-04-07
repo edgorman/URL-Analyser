@@ -47,6 +47,12 @@ if __name__ == '__main__':
         help="data to use",
         default='content')
     parser.add_argument(
+        '-ds',
+        action='store',
+        dest='sample',
+        help="sample size of data",
+        default='0.05')
+    parser.add_argument(
         '-f',
         action='store',
         dest='feats',
@@ -58,6 +64,13 @@ if __name__ == '__main__':
         dest='train',
         help="train this model's parameters (default: false)",
         default=False)
+    parser.add_argument(
+        '-no-cache',
+        action='store',
+        dest='cache',
+        help="use cached data",
+        default=True
+    )
     parser.add_argument(
         '-verbose',
         action='store_true',
@@ -75,64 +88,50 @@ if __name__ == '__main__':
 
     # Load model and feature dicts
     try:
-        models_dict = load_json_as_dict(
-            os.path.join(
-                DATA_DIRECTORY,
-                "models",
-                "results-dict.json"))
-        feat_index_dict = load_json_as_dict(os.path.join(
-            DATA_DIRECTORY, "features", "index-dict.json"))
+        models_dict = load_json_as_dict(os.path.join(DATA_DIRECTORY, "models", "results-dict.json"))
+        feat_index_dict = load_json_as_dict(os.path.join(DATA_DIRECTORY, "features", "index-dict.json"))
     except BaseException:
-        Log.error(
-            "Could not load either 'results-dict.json' or 'index-dict.json' in 'data/models/'.")
+        Log.error("Could not load either 'results-dict.json' or 'index-dict.json' in 'data/models/'.")
 
     # Validate chosen settings for model
     if is_model_valid(models_dict, args.model, args.data, args.feats):
         # Load data
         if args.url is None:
-            Log.info(
-                f"Generating features for data type '{args.data}' and feature index '{args.feats}'.")
-            x_train, x_test, y_train, y_test = app.load_data(
-                args.data, args.feats)
+            Log.info(f"Generating features for data type '{args.data}' and feature index '{args.feats}'.")
+            x_train, x_test, y_train, y_test = app.load_data(args.data, args.feats, int(args.sample), args.cache)
 
         filename = generate_model_filename(args.model, args.data, args.feats)
 
         # Train model
-        if args.train or not is_model_stored(
-                args.model, args.data, args.feats):
-            Log.info(
-                f"Training '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
-            model = app.train_model(
-                args.model, filename, x_train, y_train, models_dict)
+        if args.train or not is_model_stored(args.model, args.data, args.feats):
+            Log.info(f"Training '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
+            model = app.train_model(args.model, filename, x_train, y_train, models_dict)
         # Load model
         else:
-            Log.info(
-                f"Loading '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
-            model = app.load_model(filename,
-                                   models_dict[args.model]["isKeras"])
+            Log.info(f"Loading '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
+            model = app.load_model(filename, models_dict[args.model]["isKeras"])
 
         # Predict url
         if args.url is not None:
             # If url is valid
             if is_url_valid(args.url):
                 Log.info(f"Predicting url '{args.url}'.")
-                result = "Malicious" if app.predict_url(
-                    model, models_dict[args.model]["isKeras"], args.url) else "Benign"
+
+                result = "Benign"
+                if app.predict_url(model, models_dict[args.model]["isKeras"], args.url):
+                    result = "Malicious"
+
                 Log.result(f"The url '{args.url}' is predicted to be {result}")
             else:
                 Log.error(f"Could not load url '{args.url}'.")
         # Test model
         else:
-            Log.info(
-                f"Testing '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
-            model_results = app.test_model(
-                model, models_dict[args.model]["isKeras"], x_test, y_test)
+            Log.info(f"Testing '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
+            model_results = app.test_model(model, models_dict[args.model]["isKeras"], x_test, y_test)
 
             Log.info("Outputting reuslts to terminal.")
-            Log.result(
-                f"The scoring metrics for '{args.model}' are as follows:")
+            Log.result(f"The scoring metrics for '{args.model}' are as follows:")
             for metric, value in model_results.items():
                 Log.result(f"-> {metric} = {value}")
     else:
-        Log.error(
-            f"Could not load model '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
+        Log.error(f"Could not load model '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")

@@ -48,6 +48,7 @@ def test_load_url_data(dataset_name, ignore_columns, expected):
     expected = pd.DataFrame(data=expected)
     df = load_url_data(
         dataset_name,
+        use_cache=False,
         path=os.path.join(
             os.path.dirname(
                 os.path.realpath(__file__)),
