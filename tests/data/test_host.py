@@ -64,7 +64,7 @@ def test_host_speed(url, expected):
 
 
 @pytest.mark.parametrize("url,expected", [
-    ("example.com", 69),
+    ("google.com", 5),
     ("angkjnf.com", -1),
 ])
 def test_host_latency(url, expected):

@@ -7,7 +7,7 @@ from URLAnalyser.data.content import content_content
 
 
 @pytest.mark.parametrize("url,expected", [
-    ("example.com", requests.models.Response),
+    ("google.com", requests.models.Response),
     ("angkjnf.com", type(None)),
 ])
 def test_get_content(url, expected):
@@ -15,7 +15,7 @@ def test_get_content(url, expected):
 
 
 @pytest.mark.parametrize("url,expected", [
-    ("example.com", "text/html; charset=UTF-8"),
+    ("google.com", "text/html; charset=ISO-8859-1"),
     ("angkjnf.com", None),
 ])
 def test_content_type(url, expected):
@@ -25,7 +25,7 @@ def test_content_type(url, expected):
 
 @pytest.mark.skip(reason="Can't find example URL that redirects")
 @pytest.mark.parametrize("url,expected", [
-    ("example.com", False),
+    ("google.com", False),
     ("w.wiki/4ozb", True),
     ("angkjnf.com", None),
 ])
@@ -35,7 +35,7 @@ def test_content_redirect(url, expected):
 
 
 @pytest.mark.parametrize("url,expected", [
-    ("example.com", str),
+    ("google.com", str),
     ("angkjnf.com", type(None)),
 ])
 def test_content_content(url, expected):
