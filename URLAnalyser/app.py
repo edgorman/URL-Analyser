@@ -35,8 +35,7 @@ def load_data(dataset_name, feature_index, sample_size, use_cache):
     Log.success(f"Loaded url data for '{dataset_name}'.")
 
     # Extract the features
-    x_train, x_test = get_train_test_features(
-        x_train, x_test, dataset_name, feature_index)
+    x_train, x_test = get_train_test_features(x_train, x_test, dataset_name, feature_index)
     Log.success(f"Generated features for '{dataset_name}'.")
 
     # Normalise features

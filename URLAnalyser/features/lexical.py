@@ -52,6 +52,6 @@ def get_lexical(urls, index, vocab=defaultdict()):
                     x, string.digits)), True)
 
     if index == '0' or index == '7':
-        features = bag_of_words(features, urls['name'], vocab['lexical'])
+        features = bag_of_words(features, urls['name'], 'lexical')
 
     return features

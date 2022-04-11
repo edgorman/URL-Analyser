@@ -91,9 +91,13 @@ def test_bag_of_words():
         'And this is the third one.',
         'Is this the first document?',
     ])
-    features = bag_of_words(pd.DataFrame(), series, [])
-    assert list(
-        features.columns) == [
+    features = bag_of_words(
+        pd.DataFrame(), 
+        series, 
+        'example', 
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "features", "vocab-dict.json"))
+
+    assert list(features.columns) == [
         'and',
         'document',
         'first',

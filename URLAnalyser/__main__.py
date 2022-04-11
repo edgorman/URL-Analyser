@@ -13,14 +13,8 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 # App constants
-DATA_DIRECTORY = os.path.join(
-    os.path.dirname(
-        os.path.realpath(__file__)),
-    "data")
-MODELS_DIRECTORY = os.path.join(
-    os.path.dirname(
-        os.path.realpath(__file__)),
-    "models")
+DATA_DIRECTORY = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data")
+MODELS_DIRECTORY = os.path.join(os.path.dirname(os.path.realpath(__file__)), "models")
 
 if __name__ == '__main__':
     '''
@@ -51,7 +45,7 @@ if __name__ == '__main__':
         action='store',
         dest='sample',
         help="sample size of data",
-        default='0.05')
+        default='0.001')
     parser.add_argument(
         '-f',
         action='store',
@@ -98,7 +92,7 @@ if __name__ == '__main__':
         # Load data
         if args.url is None:
             Log.info(f"Generating features for data type '{args.data}' and feature index '{args.feats}'.")
-            x_train, x_test, y_train, y_test = app.load_data(args.data, args.feats, int(args.sample), args.cache)
+            x_train, x_test, y_train, y_test = app.load_data(args.data, args.feats, float(args.sample), args.cache)
 
         filename = generate_model_filename(args.model, args.data, args.feats)
 

@@ -7,13 +7,13 @@ def get_host(urls, index, vocab=defaultdict()):
     features = pd.DataFrame()
 
     if index == '0' or index == '1':
-        features = bag_of_words(features, urls['location'], vocab['location'])
+        features = bag_of_words(features, urls['location'], 'location')
 
     if index == '0' or index == '2':
         features.insert(0, 'server_count', urls['server_count'], True)
 
     if index == '0' or index == '3':
-        features = bag_of_words(features, urls['registrar'], vocab['lexical'])
+        features = bag_of_words(features, urls['registrar'], 'lexical')
 
     if index == '0' or index == '4':
         features.insert(0, 'creation_month', urls['creation_date'].month, True)
@@ -24,16 +24,8 @@ def get_host(urls, index, vocab=defaultdict()):
         features.insert(0, 'updated_year', urls['updated_date'].year, True)
 
     if index == '0' or index == '6':
-        features.insert(
-            0,
-            'expiration_month',
-            urls['expiration_date'].month,
-            True)
-        features.insert(
-            0,
-            'expiration_year',
-            urls['expiration_date'].year,
-            True)
+        features.insert(0, 'expiration_month', urls['expiration_date'].month, True)
+        features.insert(0, 'expiration_year', urls['expiration_date'].year, True)
 
     if index == '0' or index == '7':
         features.insert(0, 'speed', urls['speed'], True)
