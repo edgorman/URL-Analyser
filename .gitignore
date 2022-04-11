@@ -1,9 +1,8 @@
 ### URLAnalyser ###
 URLAnalyser/data/urls/blacklist.txt
 URLAnalyser/data/urls/whitelist.txt
-tests/data/urls/lexical.csv
-tests/data/urls/host.csv
-tests/data/urls/content.csv
+URLAnalyser/data/urls/*.csv
+tests/data/urls/*.csv
 *.pkl
 
 ### VisualStudioCode ###

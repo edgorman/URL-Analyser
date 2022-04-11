@@ -92,9 +92,9 @@ def test_bag_of_words():
         'Is this the first document?',
     ])
     features = bag_of_words(
-        pd.DataFrame(), 
-        series, 
-        'example', 
+        pd.DataFrame(),
+        series,
+        'example',
         os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "features", "vocab-dict.json"))
 
     assert list(features.columns) == [
