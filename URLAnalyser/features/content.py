@@ -26,7 +26,7 @@ def get_content(urls, index, vocab=defaultdict()):
         features.insert(0, 'isRedirect', urls['isRedirect'], True)
 
     if index == "0" or index == "2":
-        features = bag_of_words(features, urls['type'], vocab['doctype'])
+        features = bag_of_words(features, urls['type'], 'doctype')
 
     if index == "0" or index == "3":
         features.insert(
@@ -37,7 +37,7 @@ def get_content(urls, index, vocab=defaultdict()):
                 True))
 
     if index == "0" or index == "4":
-        features = bag_of_words(features, urls['content'], vocab['htmltag'])
+        features = bag_of_words(features, urls['content'], 'htmltag')
 
     if index == "0" or index == "5":
         features.insert(
@@ -46,7 +46,7 @@ def get_content(urls, index, vocab=defaultdict()):
                     x.split()), True))
 
     if index == "0" or index == "6":
-        features = bag_of_words(features, urls['content'], vocab['jstokens'])
+        features = bag_of_words(features, urls['content'], 'jstokens')
 
     if index == "0" or index == "7":
         features.insert(

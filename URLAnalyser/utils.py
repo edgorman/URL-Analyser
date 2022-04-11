@@ -5,10 +5,17 @@ from importlib import import_module
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 
+PARENT_FOLDER = os.path.dirname(os.path.realpath(__file__))
+
 
 def load_json_as_dict(filename):
     with open(filename, 'r') as f:
         return json.load(f)
+
+
+def save_json_as_dict(dict, filename):
+    with open(filename, 'w') as f:
+        json.dump(dict, f)
 
 
 def is_url_valid(url):
@@ -45,16 +52,18 @@ def get_class(class_name):
     return getattr(import_module(path), name)
 
 
-def bag_of_words(features, series, vocab):
-    if len(vocab) == 0:
+def bag_of_words(features, series, key, path=os.path.join(PARENT_FOLDER, "data", "features", "vocab-dict.json")):
+    vocab = load_json_as_dict(path)
+
+    if len(vocab) == 0 or key not in vocab:
         vectorizer = CountVectorizer(decode_error="ignore")
         vectorizer.fit_transform(series)
+        vocab[key] = {k: v.tolist() for k, v in vectorizer.vocabulary_.items()}
+        save_json_as_dict(vocab, path)
     else:
-        vectorizer = CountVectorizer(vocabulary=vocab, decode_error='ignore')
+        vectorizer = CountVectorizer(vocabulary=vocab[key], decode_error='ignore')
 
-    bow_df = pd.DataFrame(
-        vectorizer.transform(series).todense(),
-        columns=vectorizer.get_feature_names())
+    bow_df = pd.DataFrame(vectorizer.transform(series).todense(), columns=vectorizer.get_feature_names())
     features = features.reset_index()
     features = pd.concat([features, bow_df], axis=1)
     return features.drop(['index'], axis=1)
