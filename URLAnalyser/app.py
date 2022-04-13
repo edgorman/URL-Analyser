@@ -7,7 +7,7 @@ from URLAnalyser.models.keras import load_model as load_keras
 from URLAnalyser.models.sklearn import save_model as save_sklearn
 from URLAnalyser.models.sklearn import load_model as load_sklearn
 from URLAnalyser.models.training import tune_hyperparameters
-from URLAnalyser.features.features import scale_features
+from URLAnalyser.features.features import get_url_features, scale_features
 from URLAnalyser.features.features import get_train_test_features
 from URLAnalyser.models.testing import generate_predictions
 from URLAnalyser.models.testing import calculate_metrics
@@ -65,11 +65,7 @@ def train_model(model_name, filename, x_train, y_train, models_dict):
     Log.success(f"Created model '{model_name}'.")
 
     # Tune hyperparameters
-    model = tune_hyperparameters(
-        model,
-        models_dict[model_name]["hyperparameters"],
-        x_train,
-        y_train)
+    model = tune_hyperparameters(model, models_dict[model_name]["hyperparameters"], x_train, y_train)
     Log.success(f"Tuned hyperparameters for '{model_name}'.")
 
     # Train the model
@@ -126,16 +122,31 @@ def test_model(model, isKeras, x_test, y_test):
     return results
 
 
-def predict_url(model, isKeras, url):
+def load_url(dataset_name, feature_index, url):
+    '''
+        Load the url with the given configuration
+
+        Parameters:
+            dataset_name: The dataset to use for features
+            feature_index: The features to use for features
+            url: The url to extract features from
+
+        Returns:
+            features: The features of the url
+    '''
+    return get_url_features(url, dataset_name, feature_index)
+
+
+def test_url(model, isKeras, features):
     '''
         Predict a URL as malicious or benign using the given model
 
         Parameters:
             model: The model to use in prediction
             isKeras: Whether the model uses Keras
-            url: The URL name to test
+            features: The features of the URL
 
         Returns:
             bool: Whether the URL is malicious
     '''
-    return False
+    return generate_predictions(model, isKeras, features)[0]
