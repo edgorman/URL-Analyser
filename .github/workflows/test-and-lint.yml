@@ -18,19 +18,19 @@ jobs:
 
     steps:
     - name: Checkout URL-Analyser
-        uses: actions/checkout@v3
+      uses: actions/checkout@v3
     - name: Setup Miniconda
-        uses: goanpeca/setup-miniconda@v1
-        with:
-          auto-update-conda: true
-          auto-activate-base: false
-          miniconda-version: 'latest'
-          python-version: "3.6.15"
-          environment-file: environment.yml
-          activate-environment: URLAnalyser
+      uses: goanpeca/setup-miniconda@v1
+      with:
+        auto-update-conda: true
+        auto-activate-base: false
+        miniconda-version: 'latest'
+        python-version: "3.6.15"
+        environment-file: environment.yml
+        activate-environment: URLAnalyser
     - name: Lint with flake8
-        run: |
-          python -m flake8 . --max-line-length=120 
+      run: |
+        python -m flake8 . --max-line-length=120 
     - name: Test with pytest
-        run: |
-          python -m pytest tests/ --disable-pytest-warnings --cov=URLAnalyser -vs
+      run: |
+        python -m pytest tests/ --disable-pytest-warnings --cov=URLAnalyser -vs
