@@ -56,7 +56,7 @@ def test_host_date(url, date_type, expected):
 
 
 @pytest.mark.parametrize("url,expected", [
-    ("example.com", 0.1),
+    ("example.com", 0),
     ("angkjnf.com", -1),
 ])
 def test_host_speed(url, expected):
