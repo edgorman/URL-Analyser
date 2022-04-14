@@ -1,9 +1,11 @@
 import os
 import json
-from importlib import import_module
-
 import pandas as pd
+from importlib import import_module
 from sklearn.feature_extraction.text import CountVectorizer
+
+from URLAnalyser.data.host import get_host
+from URLAnalyser.data.content import get_content
 
 PARENT_FOLDER = os.path.dirname(os.path.realpath(__file__))
 
@@ -19,8 +21,7 @@ def save_json_as_dict(dict, filename):
 
 
 def is_url_valid(url):
-    # TODO: testing once this is done
-    return True
+    return get_host(url) is not None and get_content(url) is not None
 
 
 def is_model_valid(models_dict, model_name, dataset_name, feature_index):

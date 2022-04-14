@@ -28,7 +28,7 @@ def _save_file(df, filename, path):
     df.to_csv(os.path.join(path, filename), index=False)
 
 
-def _load_lexical(sample_rate, use_cache, path):
+def _load_lexical(sample_rate, use_cache, path, is_keras):
     if "whitelist.txt" in os.listdir(path) and "blacklist.txt" in os.listdir(path):
         benign = _load_file("whitelist.txt", path)
         malicious = _load_file("blacklist.txt", path)
@@ -36,21 +36,24 @@ def _load_lexical(sample_rate, use_cache, path):
         benign.insert(1, 'class', 0)
         malicious.insert(1, 'class', 1)
 
-        urls = pd.concat([benign, malicious]).sample(frac=sample_rate)
+        urls = pd.concat([benign, malicious])
+        if not is_keras:
+            urls = urls.sample(n=20000)
+        urls = urls.sample(frac=sample_rate)
+
         urls["name"] = urls["name"].apply(lambda x: re.sub(r"https?://(www\.)?", "", x))
         urls["is_valid"] = urls["name"].apply(lambda x: is_url_valid(x))
         return urls
     return None
 
 
-def _load_host(sample_rate, use_cache, path):
+def _load_host(sample_rate, use_cache, path, is_keras):
     # If cache enabled, try load from their first
     if use_cache and "host.csv" in os.listdir(path):
-        host = _load_file("host.csv", path)
-        return host
+        return _load_file("host.csv", path)
 
     # Initialise host df with lexical values
-    host = _load_lexical(sample_rate, use_cache, path)
+    host = _load_lexical(sample_rate, use_cache, path, is_keras)
     if host is None:
         return None
 
@@ -73,14 +76,13 @@ def _load_host(sample_rate, use_cache, path):
     return host
 
 
-def _load_content(sample_rate, use_cache, path):
+def _load_content(sample_rate, use_cache, path, is_keras):
     # If cache enabled, try load from their first
     if use_cache and "host.csv" in os.listdir(path):
-        host = _load_file("host.csv", path)
-        return host
+        return _load_file("host.csv", path)
 
     # Initialise content df with lexical values
-    content = _load_lexical(sample_rate, use_cache, path)
+    content = _load_lexical(sample_rate, use_cache, path, is_keras)
     if content is None:
         return None
 
@@ -107,16 +109,15 @@ def _load_method(dataset_name):
         return _load_content
 
 
-def load_url_data(dataset_name, sample_rate=1, use_cache=True, path=os.path.join(os.path.dirname(
-        os.path.realpath(__file__)), "urls")):
+def load_url_data(dataset_name, sample_rate=1, use_cache=True, is_keras=False, path=os.path.join(
+        os.path.dirname(os.path.realpath(__file__)), "urls")):
     load_method = _load_method(dataset_name)
 
-    url_data = load_method(sample_rate, use_cache, path)
+    url_data = load_method(sample_rate, use_cache, path, is_keras)
     _save_file(url_data, dataset_name + ".csv", path)
 
     url_data.drop(["is_valid"], inplace=True, axis=1)
     url_data.reset_index(inplace=True, drop=True)
-
     return url_data
 
 

@@ -22,9 +22,9 @@ from URLAnalyser.data.data import load_url_data
         {
             'name': ["google.com", "bbc.co.uk"],
             'class': [0, 1],
-            'registrar': ["MarkMonitor, Inc.", "British Broadcasting Corporation [Tag = BBC]"],
-            'location': ["US", None],
-            'server_count': [8, 0],
+            'registrar': ["MarkMonitor Inc.", "British Broadcasting Corporation [Tag = BBC]"],
+            'location': [None, None],
+            'server_count': [4, 0],
             'creation_date': [datetime(1997, 9, 15, 4, 0, 0), np.datetime64('NaT')],
             'updated_date': [None, None],
             'expiration_date': [None, None],
@@ -46,13 +46,8 @@ from URLAnalyser.data.data import load_url_data
 ])
 def test_load_url_data(dataset_name, ignore_columns, expected):
     expected = pd.DataFrame(data=expected)
-    df = load_url_data(
-        dataset_name,
-        use_cache=False,
-        path=os.path.join(
-            os.path.dirname(
-                os.path.realpath(__file__)),
-            "urls"))
+    df = load_url_data(dataset_name, use_cache=False, is_keras=True,
+                       path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "urls"))
 
     assert isinstance(expected, pd.DataFrame)
     assert all([col in expected.columns for col in df.columns])
@@ -62,9 +57,7 @@ def test_load_url_data(dataset_name, ignore_columns, expected):
     df.drop(ignore_columns, axis=1, inplace=True)
 
     # Sort and remove index for dataframes so we can compare dataframes
-    expected = expected.sort_values(
-        by=expected.columns.tolist()).reset_index(
-        drop=True)
+    expected = expected.sort_values(by=expected.columns.tolist()).reset_index(drop=True)
     df = df.sort_values(by=df.columns.tolist()).reset_index(drop=True)
 
     assert df.equals(expected)

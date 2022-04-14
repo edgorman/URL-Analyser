@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
 from URLAnalyser.utils import load_json_as_dict
@@ -16,10 +17,11 @@ def _get_method(dataset_name):
         return get_content
 
 
-def get_url_features(dataset_name, url_name, feature_index, vocab_path=os.path.join(
+def get_url_features(url_name, dataset_name, feature_index, vocab_path=os.path.join(
         os.path.dirname(os.path.realpath(__file__)), "..", "data", "features", "vocab-dict.json")):
+    url_set = pd.DataFrame(data={"name": [url_name]})
     get_method = _get_method(dataset_name)
-    return get_method(url_name, feature_index, load_json_as_dict(vocab_path))
+    return get_method(url_set, feature_index, load_json_as_dict(vocab_path))
 
 
 def get_train_test_features(train_set, test_set, dataset_name, feature_index, vocab_path=os.path.join(
