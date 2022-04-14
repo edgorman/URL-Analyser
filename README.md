@@ -38,7 +38,7 @@ python -m URLAnalyser -m svm -d content -f 0
 
 Run the testing scripts in the base directory:
 ```
-python -m pytest tests/ --disable-pytest-warnings --cov=URLAnalyser 
+python -m pytest tests/ --disable-pytest-warnings --cov=URLAnalyser -vs
 python -m autopep8 . --in-place --aggressive --recursive --max-line-length 120
 python -m flake8 . --max-line-length=120
 ```

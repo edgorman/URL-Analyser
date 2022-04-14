@@ -13,7 +13,7 @@ from URLAnalyser.models.testing import generate_predictions
 from URLAnalyser.models.testing import calculate_metrics
 
 
-def load_data(dataset_name, feature_index, sample_size, use_cache):
+def load_data(dataset_name, feature_index, sample_size, use_cache, is_keras):
     '''
         Load the data with the given configuration
 
@@ -22,6 +22,7 @@ def load_data(dataset_name, feature_index, sample_size, use_cache):
             feature_index: The features to use in training
             sample_size: The size of the sample of data
             use_cache: Use cached data if available
+            is_keras: Whether the model uses Keras
 
         Returns
             x_train: The features used in training
@@ -30,7 +31,7 @@ def load_data(dataset_name, feature_index, sample_size, use_cache):
             y_test: The labels used in testing
     '''
     # Load URLs and split into train and test set
-    url_data = load_url_data(dataset_name, sample_size, use_cache)
+    url_data = load_url_data(dataset_name, sample_size, use_cache, is_keras)
     x_train, x_test, y_train, y_test = get_train_test_data(url_data)
     Log.success(f"Loaded url data for '{dataset_name}'.")
 
@@ -80,7 +81,7 @@ def train_model(model_name, filename, x_train, y_train, models_dict):
     return model
 
 
-def load_model(filename, isKeras):
+def load_model(filename, is_keras):
     '''
         Load a model with the given configuration
 
@@ -91,7 +92,7 @@ def load_model(filename, isKeras):
             model: The previously trained model
     '''
     try:
-        load_method = load_keras if isKeras else load_sklearn
+        load_method = load_keras if is_keras else load_sklearn
         model = load_method(filename)
         Log.success(f"Loaded model from '{filename}'.")
     except BaseException:
@@ -100,20 +101,20 @@ def load_model(filename, isKeras):
     return model
 
 
-def test_model(model, isKeras, x_test, y_test):
+def test_model(model, is_keras, x_test, y_test):
     '''
         Test a model in terms of f1-score and recall
 
         Parameters:
             model: The model to use in prediction
-            isKeras: Whether the model uses Keras
+            is_keras: Whether the model uses Keras
             x_test: The labels used in training
             y_test: The labels used in testing
 
         Returns:
             results: Results stored in a dict
     '''
-    predictions = generate_predictions(model, isKeras, x_test)
+    predictions = generate_predictions(model, is_keras, x_test)
     Log.success("Generated predictions from tests.")
 
     results = calculate_metrics(predictions, y_test)
@@ -137,16 +138,16 @@ def load_url(dataset_name, feature_index, url):
     return get_url_features(url, dataset_name, feature_index)
 
 
-def test_url(model, isKeras, features):
+def test_url(model, is_keras, features):
     '''
         Predict a URL as malicious or benign using the given model
 
         Parameters:
             model: The model to use in prediction
-            isKeras: Whether the model uses Keras
+            is_keras: Whether the model uses Keras
             features: The features of the URL
 
         Returns:
             bool: Whether the URL is malicious
     '''
-    return generate_predictions(model, isKeras, features)[0]
+    return generate_predictions(model, is_keras, features)[0]

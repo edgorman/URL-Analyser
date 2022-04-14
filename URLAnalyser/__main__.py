@@ -1,13 +1,13 @@
-from URLAnalyser.utils import is_model_stored
-from URLAnalyser.utils import is_model_valid
-from URLAnalyser.utils import is_url_valid
 from URLAnalyser.utils import generate_model_filename, load_json_as_dict
+from URLAnalyser.utils import is_url_valid
+from URLAnalyser.utils import is_model_valid
+from URLAnalyser.utils import is_model_stored
 from URLAnalyser.log import Log
 from URLAnalyser import app
+import os
+import sys
 import colorama
 import argparse
-import sys
-import os
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -85,6 +85,7 @@ if __name__ == '__main__':
         models_dict = load_json_as_dict(os.path.join(DATA_DIRECTORY, "models", "results-dict.json"))
         feat_index_dict = load_json_as_dict(os.path.join(DATA_DIRECTORY, "features", "index-dict.json"))
         model_filename = generate_model_filename(args.model, args.data, args.feats)
+        model_is_keras = models_dict[args.model]["isKeras"]
     except BaseException:
         Log.error("Could not load either 'results-dict.json' or 'index-dict.json' in 'data/models/'.")
 
@@ -93,13 +94,14 @@ if __name__ == '__main__':
         # Train model
         if args.train or not is_model_stored(args.model, args.data, args.feats):
             Log.info(f"Generating features for data type '{args.data}' and feature index '{args.feats}'.")
-            x_train, x_test, y_train, y_test = app.load_data(args.data, args.feats, float(args.sample), args.cache)
+            x_train, x_test, y_train, y_test = app.load_data(
+                args.data, args.feats, float(args.sample), args.cache, model_is_keras)
             Log.info(f"Training '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
             model = app.train_model(args.model, model_filename, x_train, y_train, models_dict)
         # Load model
         else:
             Log.info(f"Loading '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
-            model = app.load_model(model_filename, models_dict[args.model]["isKeras"])
+            model = app.load_model(model_filename, model_is_keras)
 
         # Predict url
         if args.url is not None:
@@ -110,7 +112,7 @@ if __name__ == '__main__':
 
                 Log.info(f"Predicting url '{args.url}'.")
                 result = "Benign"
-                if app.test_url(model, models_dict[args.model]["isKeras"], features):
+                if app.test_url(model, model_is_keras, features):
                     result = "Malicious"
 
                 Log.result(f"The url '{args.url}' is predicted to be {result}")
@@ -119,7 +121,7 @@ if __name__ == '__main__':
         # Test model
         else:
             Log.info(f"Testing '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
-            model_results = app.test_model(model, models_dict[args.model]["isKeras"], x_test, y_test)
+            model_results = app.test_model(model, model_is_keras, x_test, y_test)
 
             Log.info("Outputting reuslts to terminal.")
             Log.result(f"The scoring metrics for '{args.model}' are as follows:")

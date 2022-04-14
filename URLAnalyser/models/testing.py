@@ -5,9 +5,9 @@ from sklearn.metrics import f1_score
 from sklearn.metrics import recall_score
 
 
-def generate_predictions(model, isKeras, x_test):
+def generate_predictions(model, is_keras, x_test):
     predictions = model.predict(x_test)
-    if isKeras:
+    if is_keras:
         predictions = (predictions > 0.5).astype(np.int)
     return predictions
 
