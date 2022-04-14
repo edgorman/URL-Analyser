@@ -22,7 +22,7 @@ jobs:
     steps:
     - name: Checkout URL-Analyser
       uses: actions/checkout@v3
-    - name: Setup Miniconda
+    - name: Setup Anaconda
       uses: goanpeca/setup-miniconda@v1
       with:
         auto-update-conda: true
@@ -31,9 +31,15 @@ jobs:
         python-version: "3.6.15"
         environment-file: environment.yml
         activate-environment: URLAnalyser
+    - name: Activate Environment
+      shell: pwsh
+      run: |
+        conda activate URLAnalyser
     - name: Lint with flake8
+      shell: pwsh
       run: |
         python -m flake8 . --max-line-length=120 
     - name: Test with pytest
+      shell: pwsh
       run: |
         python -m pytest tests/ --disable-pytest-warnings --cov=URLAnalyser -vs
