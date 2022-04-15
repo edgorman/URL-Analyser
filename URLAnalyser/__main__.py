@@ -1,15 +1,16 @@
-from URLAnalyser.utils import generate_model_filename, load_json_as_dict
-from URLAnalyser.utils import is_url_valid
-from URLAnalyser.utils import is_model_valid
-from URLAnalyser.utils import is_model_stored
-from URLAnalyser.log import Log
-from URLAnalyser import app
-import os
-import sys
-import colorama
-import argparse
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
+
+from URLAnalyser.utils import generate_model_filename, load_json_as_dict  # noqa: E402
+from URLAnalyser.utils import is_url_valid  # noqa: E402
+from URLAnalyser.utils import is_model_valid  # noqa: E402
+from URLAnalyser.utils import is_model_stored  # noqa: E402
+from URLAnalyser.log import Log  # noqa: E402
+from URLAnalyser import app  # noqa: E402
+import os  # noqa: E402
+import sys  # noqa: E402
+import colorama  # noqa: E402
+import argparse  # noqa: E402
 
 
 # App constants
@@ -24,54 +25,16 @@ if __name__ == '__main__':
     colorama.init(convert=True)
 
     # Parse input arguments
-    parser = argparse.ArgumentParser(
-        prog="urlanalyser",
-        description="Predict whether a URL is malicious using machine learning.")
+    parser = argparse.ArgumentParser(prog="URLAnalyser", description="Predict whether a URL is malicious.")
     parser.add_argument('-u', action='store', dest='url', help="url to test")
-    parser.add_argument(
-        '-m',
-        action='store',
-        dest='model',
-        help="model to use",
-        default='rf')
-    parser.add_argument(
-        '-d',
-        action='store',
-        dest='data',
-        help="data to use",
-        default='content')
-    parser.add_argument(
-        '-ds',
-        action='store',
-        dest='sample',
-        help="sample size of data",
-        default='0.001')
-    parser.add_argument(
-        '-f',
-        action='store',
-        dest='feats',
-        help="features to use",
-        default='0')
-    parser.add_argument(
-        '-train',
-        action='store_true',
-        dest='train',
-        help="train this model's parameters (default: false)",
-        default=False)
-    parser.add_argument(
-        '-no-cache',
-        action='store',
-        dest='cache',
-        help="use cached data",
-        default=True
-    )
-    parser.add_argument(
-        '-verbose',
-        action='store_true',
-        dest='verbose',
-        help="show extra information while running (default: false)",
-        default=False)
-    parser.add_argument('-version', action='version', version='%(prog)s@dev')
+    parser.add_argument('-m', action='store', dest='model', help="model to use", default='rf')
+    parser.add_argument('-d', action='store', dest='data', help="data to use", default='content')
+    parser.add_argument('-f', action='store', dest='feats', help="features to use", default='0')
+    parser.add_argument('-s', action='store', dest='sample', help="sample size", default='0.001')
+    parser.add_argument('-cache', action='store_false', dest='cache', help="use cached features", default=True)
+    parser.add_argument('-train', action='store_true', dest='train', help="fresh training round", default=False)
+    parser.add_argument('-verbose', action='store_true', dest='verbose', help="show extra output", default=False)
+    parser.add_argument('-version', action='version', version='%(prog)s@2.0')
 
     # Note: Help and Version command are handled by argparse
     args = parser.parse_args(sys.argv[1:])

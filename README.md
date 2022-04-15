@@ -2,6 +2,10 @@
 
 A comprehensive investigation for the development of a malicious URL detection system using Machine Learning. This contributed to my BSc Computer Science degree at University of Southampton, which received a First-Class with honours classification.
 
+[![Lint and Test Application](https://github.com/edgorman/URL-Analyser/actions/workflows/test-and-lint.yml/badge.svg)](https://github.com/edgorman/URL-Analyser/actions/workflows/test-and-lint.yml)
+
+
+
 ## Installation
 Use the following command to clone the respository:
 ```
