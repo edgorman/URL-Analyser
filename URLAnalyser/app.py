@@ -1,5 +1,10 @@
+import os
 from URLAnalyser.log import Log
 from URLAnalyser.utils import get_class
+from URLAnalyser.utils import generate_model_filename, load_json_as_dict
+from URLAnalyser.utils import url_is_valid
+from URLAnalyser.utils import model_is_valid
+from URLAnalyser.utils import model_is_stored
 from URLAnalyser.data.data import load_url_data
 from URLAnalyser.data.data import get_train_test_data
 from URLAnalyser.models.keras import save_model as save_keras
@@ -11,6 +16,11 @@ from URLAnalyser.features.features import get_url_features, scale_features
 from URLAnalyser.features.features import get_train_test_features
 from URLAnalyser.models.testing import generate_predictions
 from URLAnalyser.models.testing import calculate_metrics
+
+
+# App constants
+DATA_DIRECTORY = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data")
+MODELS_DIRECTORY = os.path.join(os.path.dirname(os.path.realpath(__file__)), "models")
 
 
 def load_data(dataset_name, feature_index, sample_size, use_cache, is_keras):
@@ -112,7 +122,7 @@ def test_model(model, is_keras, x_test, y_test):
             y_test: The labels used in testing
 
         Returns:
-            results: Results stored in a dict
+            None
     '''
     predictions = generate_predictions(model, is_keras, x_test)
     Log.success("Generated predictions from tests.")
@@ -120,25 +130,12 @@ def test_model(model, is_keras, x_test, y_test):
     results = calculate_metrics(predictions, y_test)
     Log.success("Generated results for model.")
 
-    return results
+    Log.result("The scoring metrics for the model are as follows:")
+    for metric, value in results.items():
+        Log.result(f"-> {metric} = {value}")
 
 
-def load_url(dataset_name, feature_index, url):
-    '''
-        Load the url with the given configuration
-
-        Parameters:
-            dataset_name: The dataset to use for features
-            feature_index: The features to use for features
-            url: The url to extract features from
-
-        Returns:
-            features: The features of the url
-    '''
-    return get_url_features(url, dataset_name, feature_index)
-
-
-def test_url(model, is_keras, features):
+def test_url(url_name, dataset_name, feature_index, model, is_keras, features):
     '''
         Predict a URL as malicious or benign using the given model
 
@@ -150,4 +147,55 @@ def test_url(model, is_keras, features):
         Returns:
             bool: Whether the URL is malicious
     '''
+    if not url_is_valid(url_name):
+        Log.error(f"Could not load url '{url_name}'.")
+
+    features = get_url_features(url_name, dataset_name, feature_index, url_name)
+    result = generate_predictions(model, is_keras, features)[0]
+
+    result = "Benign" if result else "Malicious"
+    Log.result(f"The url '{url_name}' is predicted to be {result}")
     return generate_predictions(model, is_keras, features)[0]
+
+
+def main(args):
+    '''
+        Process the arguments and determine the top-level functions to execute
+
+        Parameters:
+            args: The arguments input from the user
+
+        Returns:
+            None
+    '''
+    # Check the required resources are available
+    try:
+        models_dict = load_json_as_dict(os.path.join(DATA_DIRECTORY, "models", "results-dict.json"))
+    except BaseException:
+        Log.error("Could not load 'results-dict.json' in 'data/models/'.")
+
+    # Check the arguments passed are valid
+    if not model_is_valid(args.model, args.data, args.feats, models_dict):
+        Log.error(f"Could not load model '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
+
+    # Generate model filename and whether it is a Keras model
+    model_filename = generate_model_filename(args.model, args.data, args.feats)
+    model_is_keras = models_dict[args.model]["isKeras"]
+
+    # Load data and features
+    if args.train or not model_is_stored(model_filename) or args.url is None:
+        x_train, x_test, y_train, y_test = load_data(args.data, args.feats, args.sample, args.cache, model_is_keras)
+
+    # Train or load the model from storage
+    if args.train:
+        model = train_model(args.model, model_filename, x_train, y_train, models_dict)
+    else:
+        model = load_model(model_filename, model_is_keras)
+
+    # Predict url
+    if args.url is not None:
+        result = "Benign" if test_url(args.url, args.data, args.feats, model, model_is_keras) else "Malicious"
+        Log.result(f"The url '{args.url}' is predicted to be {result}")
+    # Else test model
+    else:
+        test_model(model, model_is_keras, x_test, y_test)

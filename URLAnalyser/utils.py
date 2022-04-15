@@ -4,6 +4,8 @@ import pandas as pd
 from importlib import import_module
 from sklearn.feature_extraction.text import CountVectorizer
 
+from URLAnalyser.app import DATA_DIRECTORY
+from URLAnalyser.app import MODELS_DIRECTORY
 from URLAnalyser.data.host import get_host
 from URLAnalyser.data.content import get_content
 
@@ -20,29 +22,26 @@ def save_json_as_dict(dict, filename):
         json.dump(dict, f)
 
 
-def is_url_valid(url):
+def url_is_valid(url):
     return get_host(url) is not None and get_content(url) is not None
 
 
-def is_model_valid(models_dict, model_name, dataset_name, feature_index):
+def model_is_valid(model_name, dataset_name, feature_index, models_dict):
     if model_name in models_dict.keys():
         if dataset_name in models_dict[model_name]['featuresets'].keys():
-            if int(
-                    feature_index) in models_dict[model_name]['featuresets'][dataset_name]['indexes']:
+            if int(feature_index) in models_dict[model_name]['featuresets'][dataset_name]['indexes']:
                 return True
     return False
 
 
-def generate_model_filename(model_name, dataset_name, feature_index):
-    return f"{model_name}-{dataset_name}-{feature_index}"
-
-
-def is_model_stored(model_name, dataset_name, feature_index, path=os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), "data", "models")):
+def model_is_stored(model_name, dataset_name, feature_index, path=MODELS_DIRECTORY):
     filename = generate_model_filename(model_name, dataset_name, feature_index)
     model_filenames = [s.split(".")[0] for s in os.listdir(path)]
-
     return filename in model_filenames
+
+
+def generate_model_filename(model_name, dataset_name, feature_index):
+    return f"{model_name}-{dataset_name}-{feature_index}"
 
 
 def get_class(class_name):
@@ -53,7 +52,7 @@ def get_class(class_name):
     return getattr(import_module(path), name)
 
 
-def bag_of_words(features, series, key, path=os.path.join(PARENT_FOLDER, "data", "features", "vocab-dict.json")):
+def bag_of_words(features, series, key, path=os.path.join(DATA_DIRECTORY, "features", "vocab-dict.json")):
     vocab = load_json_as_dict(path)
 
     if len(vocab) == 0 or key not in vocab:
