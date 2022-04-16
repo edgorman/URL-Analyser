@@ -1,4 +1,3 @@
-import os
 import pytest
 import numpy as np
 import pandas as pd
@@ -45,9 +44,9 @@ from URLAnalyser.data.data import load_url_data
     )
 ])
 def test_load_url_data(dataset_name, ignore_columns, expected):
+    # TODO: Update app.DATA_DIRECTORY to use test version of directory
     expected = pd.DataFrame(data=expected)
-    df = load_url_data(dataset_name, use_cache=False, is_keras=True,
-                       path=os.path.join(os.path.dirname(os.path.realpath(__file__)), "urls"))
+    df = load_url_data(dataset_name, use_cache=False, is_keras=True)
 
     assert isinstance(expected, pd.DataFrame)
     assert all([col in expected.columns for col in df.columns])

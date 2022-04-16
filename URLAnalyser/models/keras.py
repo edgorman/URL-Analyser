@@ -1,12 +1,12 @@
 import os
 from keras.models import load_model as load
 
-
-def save_model(model, filename, path=os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), "..", "data", "models")):
-    model.save(os.path.join(path, filename))
+from URLAnalyser import app
 
 
-def load_model(filename, path=os.path.join(os.path.dirname(
-        os.path.realpath(__file__)), "..", "data", "models")):
-    return load(os.path.join(path, filename))
+def save_model(model, filename):
+    model.save(os.path.join(app.DATA_DIRECTORY, "models", filename))
+
+
+def load_model(filename):
+    return load(os.path.join(app.DATA_DIRECTORY, "models", filename))

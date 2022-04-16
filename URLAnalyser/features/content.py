@@ -22,35 +22,25 @@ def average_js_length(words):
 def get_content(urls, index, vocab=defaultdict()):
     features = pd.DataFrame()
 
-    if index == "0" or index == "1":
+    if index == 0 or index == 1:
         features.insert(0, 'isRedirect', urls['isRedirect'], True)
 
-    if index == "0" or index == "2":
+    if index == 0 or index == 2:
         features = bag_of_words(features, urls['type'], 'doctype')
 
-    if index == "0" or index == "3":
-        features.insert(
-            0,
-            'contentLength',
-            urls['content'].apply(
-                lambda x: len(x),
-                True))
+    if index == 0 or index == 3:
+        features.insert(0, 'contentLength', urls['content'].apply(lambda x: len(x), True))
 
-    if index == "0" or index == "4":
+    if index == 0 or index == 4:
         features = bag_of_words(features, urls['content'], 'htmltag')
 
-    if index == "0" or index == "5":
-        features.insert(
-            0, 'averageWordLength', urls['content'].apply(
-                lambda x: average_word_length(
-                    x.split()), True))
+    if index == 0 or index == 5:
+        features.insert(0, 'averageWordLength', urls['content'].apply(lambda x: average_word_length(x.split()), True))
 
-    if index == "0" or index == "6":
+    if index == 0 or index == 6:
         features = bag_of_words(features, urls['content'], 'jstokens')
 
-    if index == "0" or index == "7":
-        features.insert(
-            0, 'averageJsLength', urls['content'].apply(
-                lambda x: average_js_length(x), True))
+    if index == 0 or index == 7:
+        features.insert(0, 'averageJsLength', urls['content'].apply(lambda x: average_js_length(x), True))
 
     return features

@@ -22,8 +22,8 @@ if __name__ == '__main__':
     parser.add_argument('-d', action='store', dest='data', help="data to use", default='content')
     parser.add_argument('-f', action='store', dest='feats', help="features to use", default='0')
     parser.add_argument('-s', action='store', dest='sample', help="sample size", default='0.001')
-    parser.add_argument('-cache', action='store_false', dest='cache', help="use cached features", default=True)
-    parser.add_argument('-train', action='store_true', dest='train', help="fresh training round", default=False)
+    parser.add_argument('-cache', action='store_false', dest='cache', help="turn caching off", default=True)
+    parser.add_argument('-train', action='store_true', dest='train', help="train model again", default=False)
     parser.add_argument('-verbose', action='store_true', dest='verbose', help="show extra output", default=False)
     parser.add_argument('-version', action='version', version='%(prog)s@2.0')
 
@@ -35,6 +35,7 @@ if __name__ == '__main__':
         Log.verboseness = 1
 
     # Handle other types
+    args.feats = int(args.feats)
     args.sample = float(args.sample)
 
     # Process arguments and run module

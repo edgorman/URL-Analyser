@@ -4,12 +4,9 @@ import pandas as pd
 from importlib import import_module
 from sklearn.feature_extraction.text import CountVectorizer
 
-from URLAnalyser.app import DATA_DIRECTORY
-from URLAnalyser.app import MODELS_DIRECTORY
+from URLAnalyser import app
 from URLAnalyser.data.host import get_host
 from URLAnalyser.data.content import get_content
-
-PARENT_FOLDER = os.path.dirname(os.path.realpath(__file__))
 
 
 def load_json_as_dict(filename):
@@ -29,14 +26,13 @@ def url_is_valid(url):
 def model_is_valid(model_name, dataset_name, feature_index, models_dict):
     if model_name in models_dict.keys():
         if dataset_name in models_dict[model_name]['featuresets'].keys():
-            if int(feature_index) in models_dict[model_name]['featuresets'][dataset_name]['indexes']:
+            if feature_index in models_dict[model_name]['featuresets'][dataset_name]['indexes']:
                 return True
     return False
 
 
-def model_is_stored(model_name, dataset_name, feature_index, path=MODELS_DIRECTORY):
-    filename = generate_model_filename(model_name, dataset_name, feature_index)
-    model_filenames = [s.split(".")[0] for s in os.listdir(path)]
+def model_is_stored(filename):
+    model_filenames = [s.split(".")[0] for s in os.listdir(os.path.join(app.DATA_DIRECTORY, "models"))]
     return filename in model_filenames
 
 
@@ -52,14 +48,14 @@ def get_class(class_name):
     return getattr(import_module(path), name)
 
 
-def bag_of_words(features, series, key, path=os.path.join(DATA_DIRECTORY, "features", "vocab-dict.json")):
-    vocab = load_json_as_dict(path)
+def bag_of_words(features, series, key):
+    vocab = load_json_as_dict(os.path.join(app.DATA_DIRECTORY, "features", "vocab-dict.json"))
 
     if len(vocab) == 0 or key not in vocab:
         vectorizer = CountVectorizer(decode_error="ignore")
         vectorizer.fit_transform(series)
         vocab[key] = {k: v.tolist() for k, v in vectorizer.vocabulary_.items()}
-        save_json_as_dict(vocab, path)
+        save_json_as_dict(vocab, os.path.join(app.DATA_DIRECTORY, "features", "vocab-dict.json"))
     else:
         vectorizer = CountVectorizer(vocabulary=vocab[key], decode_error='ignore')
 

@@ -3,7 +3,8 @@ import re
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from URLAnalyser.utils import is_url_valid
+from URLAnalyser import app
+from URLAnalyser.utils import url_is_valid
 from URLAnalyser.data.host import get_host
 from URLAnalyser.data.host import host_registrar
 from URLAnalyser.data.host import host_country
@@ -37,12 +38,10 @@ def _load_lexical(sample_rate, use_cache, path, is_keras):
         malicious.insert(1, 'class', 1)
 
         urls = pd.concat([benign, malicious])
-        if not is_keras:
-            urls = urls.sample(n=20000)
-        urls = urls.sample(frac=sample_rate)
+        urls = urls.sample(frac=sample_rate) if is_keras else urls.sample(n=20000)
 
         urls["name"] = urls["name"].apply(lambda x: re.sub(r"https?://(www\.)?", "", x))
-        urls["is_valid"] = urls["name"].apply(lambda x: is_url_valid(x))
+        urls["is_valid"] = False
         return urls
     return None
 
@@ -58,6 +57,7 @@ def _load_host(sample_rate, use_cache, path, is_keras):
         return None
 
     # Remove urls that are not valid
+    host["is_valid"] = host["name"].apply(lambda x: url_is_valid(x))
     host = host[host.is_valid]
 
     # Extract host based information from sites
@@ -87,6 +87,7 @@ def _load_content(sample_rate, use_cache, path, is_keras):
         return None
 
     # Remove urls that are not valid
+    content["is_valid"] = content["name"].apply(lambda x: url_is_valid(x))
     content = content[content.is_valid]
 
     # Extract content based information from sites
@@ -109,9 +110,9 @@ def _load_method(dataset_name):
         return _load_content
 
 
-def load_url_data(dataset_name, sample_rate=1, use_cache=True, is_keras=False, path=os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), "urls")):
+def load_url_data(dataset_name, sample_rate=1, use_cache=True, is_keras=False):
     load_method = _load_method(dataset_name)
+    path = os.path.join(app.DATA_DIRECTORY, "urls")
 
     url_data = load_method(sample_rate, use_cache, path, is_keras)
     _save_file(url_data, dataset_name + ".csv", path)
