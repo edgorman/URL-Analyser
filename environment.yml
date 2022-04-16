@@ -156,6 +156,7 @@ dependencies:
   - requests
   - flake8
   - autopep8
+  - mock
   - pip:
     - python-whois
     - pythonping

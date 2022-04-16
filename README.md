@@ -47,10 +47,9 @@ python -m flake8 . --max-line-length=120
 python -m pytest URLAnalyser/tests/ --disable-pytest-warnings --cov=URLAnalyser -vs
 ```
 
-To update the environment and requirement files, run:
+To update the environment file, run:
 ```
 conda env export > environment.yml
-pip list --format=freeze > requirements.txt
 ```
 
 ## Contributing

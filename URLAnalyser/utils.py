@@ -23,7 +23,7 @@ def load_json_as_dict(filename: str) -> dict:
         return json.load(f)
 
 
-def save_json_as_dict(dict: dict, filename: str) -> None:
+def save_dict_as_json(dict: dict, filename: str) -> None:
     '''
         Save a dictionary into a JSON file
 
@@ -36,6 +36,33 @@ def save_json_as_dict(dict: dict, filename: str) -> None:
     '''
     with open(filename, 'w') as f:
         json.dump(dict, f)
+
+
+def load_csv_as_dataframe(filename: str) -> pd.DataFrame:
+    '''
+        Load a CSV file into a dataframe
+
+        Parameters:
+            filename: Name of the CSV file
+
+        Returns:
+            dataframe: CSV file as a dataframe
+    '''
+    return pd.read_csv(filename, header=0)
+
+
+def save_dataframe_to_csv(df: pd.DataFrame, filename: str) -> None:
+    '''
+        Save a dataframe into a CSV file
+
+        Parameters:
+            df: Dataframe object
+            filename: Name of the CSV file
+
+        Returns:
+            None
+    '''
+    df.to_csv(filename, index=False)
 
 
 def url_is_valid(url: str) -> bool:
@@ -139,7 +166,7 @@ def bag_of_words(features: pd.DataFrame, series: pd.Series, key: str) -> pd.Data
         vectorizer = CountVectorizer(decode_error="ignore")
         vectorizer.fit_transform(series)
         vocab[key] = {k: v.tolist() for k, v in vectorizer.vocabulary_.items()}
-        save_json_as_dict(vocab, os.path.join(DATA_DIRECTORY, "features", "vocab-dict.json"))
+        save_dict_as_json(vocab, os.path.join(DATA_DIRECTORY, "features", "vocab-dict.json"))
     else:
         vectorizer = CountVectorizer(vocabulary=vocab[key], decode_error='ignore')
 

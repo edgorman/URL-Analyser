@@ -3,8 +3,11 @@ import re
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from URLAnalyser.constants import DATA_DIRECTORY
+from URLAnalyser.log import Log
+from URLAnalyser.constants import URL_DATA_DIRECTORY
 from URLAnalyser.utils import url_is_valid
+from URLAnalyser.utils import load_csv_as_dataframe
+from URLAnalyser.utils import save_dataframe_to_csv
 from URLAnalyser.data.host import get_host
 from URLAnalyser.data.host import host_registrar
 from URLAnalyser.data.host import host_country
@@ -18,27 +21,27 @@ from URLAnalyser.data.content import content_redirect
 from URLAnalyser.data.content import content_content
 
 
-def _load_file(filename, path):
-    if filename in os.listdir(path):
-        df = pd.read_csv(os.path.join(path, filename), header=None, names=["name"])
-        df = df.dropna()
-        return df
+def _load_lexical(sample_rate: float, use_cache: bool, is_keras: bool):
+    '''
+        Load the ground truth lexical data from the local text files
 
+        Parameters:
+            sample_rate: Percentage of urls to sample
+            use_cache: Whether to use stored version (ignored)
+            is_keras: True if data will be used for a keras model
 
-def _save_file(df, filename, path):
-    df.to_csv(os.path.join(path, filename), index=False)
-
-
-def _load_lexical(sample_rate, use_cache, path, is_keras):
-    if "whitelist.txt" in os.listdir(path) and "blacklist.txt" in os.listdir(path):
-        benign = _load_file("whitelist.txt", path)
-        malicious = _load_file("blacklist.txt", path)
+        Returns:
+            dataframe: Dataframe object containing url names and classes
+    '''
+    if "whitelist.txt" in os.listdir(URL_DATA_DIRECTORY) and "blacklist.txt" in os.listdir(URL_DATA_DIRECTORY):
+        benign = load_csv_as_dataframe(os.path.join(URL_DATA_DIRECTORY, "whitelist.txt"))
+        malicious = load_csv_as_dataframe(os.path.join(URL_DATA_DIRECTORY, "blacklist.txt"))
 
         benign.insert(1, 'class', 0)
         malicious.insert(1, 'class', 1)
 
         urls = pd.concat([benign, malicious])
-        urls = urls.sample(frac=sample_rate) if is_keras else urls.sample(n=20000)
+        urls = urls.sample(frac=sample_rate) if is_keras else urls.sample(n=min(len(urls), 20000))
 
         urls["name"] = urls["name"].apply(lambda x: re.sub(r"https?://(www\.)?", "", x))
         urls["is_valid"] = False
@@ -46,13 +49,24 @@ def _load_lexical(sample_rate, use_cache, path, is_keras):
     return None
 
 
-def _load_host(sample_rate, use_cache, path, is_keras):
+def _load_host(sample_rate: float, use_cache: bool, is_keras: bool):
+    '''
+        Load the host data using the url names
+
+        Parameters:
+            sample_rate: Percentage of urls to sample
+            use_cache: Whether to use stored version
+            is_keras: True if data will be used for a keras model
+
+        Returns:
+            dataframe: Dataframe object containing host data
+    '''
     # If cache enabled, try load from their first
-    if use_cache and "host.csv" in os.listdir(path):
-        return _load_file("host.csv", path)
+    if use_cache and "host.csv" in os.listdir(URL_DATA_DIRECTORY):
+        return load_csv_as_dataframe(os.path.join(URL_DATA_DIRECTORY, "host.csv"))
 
     # Initialise host df with lexical values
-    host = _load_lexical(sample_rate, use_cache, path, is_keras)
+    host = _load_lexical(sample_rate, use_cache, is_keras)
     if host is None:
         return None
 
@@ -73,16 +87,28 @@ def _load_host(sample_rate, use_cache, path, is_keras):
 
     # Remove extra info column at the end
     host.drop(["info"], axis=1, inplace=True)
+    save_dataframe_to_csv(host, os.path.join(URL_DATA_DIRECTORY, "host.csv"))
     return host
 
 
-def _load_content(sample_rate, use_cache, path, is_keras):
+def _load_content(sample_rate: float, use_cache: bool, is_keras: bool):
+    '''
+        Load the content data using the url names
+
+        Parameters:
+            sample_rate: Percentage of urls to sample
+            use_cache: Whether to use stored version
+            is_keras: True if data will be used for a keras model
+
+        Returns:
+            dataframe: Dataframe object containing content data
+    '''
     # If cache enabled, try load from their first
-    if use_cache and "host.csv" in os.listdir(path):
-        return _load_file("host.csv", path)
+    if use_cache and "content.csv" in os.listdir(URL_DATA_DIRECTORY):
+        return load_csv_as_dataframe(os.path.join(URL_DATA_DIRECTORY, "content.csv"))
 
     # Initialise content df with lexical values
-    content = _load_lexical(sample_rate, use_cache, path, is_keras)
+    content = _load_lexical(sample_rate, use_cache, is_keras)
     if content is None:
         return None
 
@@ -98,31 +124,69 @@ def _load_content(sample_rate, use_cache, path, is_keras):
 
     # Remove extra info column at the end
     content.drop(["info"], axis=1, inplace=True)
+    save_dataframe_to_csv(content, os.path.join(URL_DATA_DIRECTORY, "content.csv"))
     return content
 
 
-def _load_method(dataset_name):
+def _load_method(dataset_name: str):
+    '''
+        Load the dataframe for the corresponding dataset
+
+        Parameters:
+            dataset_name: Name of the chosen dataset
+
+        Returns:
+            method: Method for loading dataframe for dataset
+    '''
     if dataset_name == 'lexical':
         return _load_lexical
-    if dataset_name == 'host':
+    elif dataset_name == 'host':
         return _load_host
-    if dataset_name == 'content':
+    elif dataset_name == 'content':
         return _load_content
+    else:
+        return None
 
 
-def load_url_data(dataset_name, sample_rate=1, use_cache=True, is_keras=False):
+def load_url_data(dataset_name: str, sample_rate: float = 1, use_cache: bool = True, is_keras: bool = False):
+    '''
+        Load the url dataframe for the corresponding dataset
+
+        Parameters:
+            dataset_name: Name of the chosen dataset
+            sample_rate: Percentage of urls to sample
+            use_cache: Whether to use stored version
+            is_keras: True if data will be used for a keras model
+
+        Returns:
+            dataframe: Dataframe object containing url data
+    '''
     load_method = _load_method(dataset_name)
-    path = os.path.join(DATA_DIRECTORY, "urls")
+    if load_method is None:
+        Log.error(f"Failed to find load method for dataset '{dataset_name}'.")
 
-    url_data = load_method(sample_rate, use_cache, path, is_keras)
-    _save_file(url_data, dataset_name + ".csv", path)
+    url_data = load_method(sample_rate, use_cache, is_keras)
+    if url_data is None:
+        Log.error(f"Failed to load data for '{dataset_name}'.")
 
     url_data.drop(["is_valid"], inplace=True, axis=1)
     url_data.reset_index(inplace=True, drop=True)
     return url_data
 
 
-def get_train_test_data(url_dataframe):
-    y = url_dataframe['class']
-    x = url_dataframe.drop(['class'], axis=1)
+def get_train_test_data(url_data: pd.DataFrame):
+    '''
+        Split the url dataframe into a train and test set
+
+        Parameters:
+            url_data: Dataframe object containing url data
+
+        Returns:
+            x_train: Training features
+            x_test: Testing features
+            y_train: Training labels
+            y_test: Testing labels
+    '''
+    y = url_data['class']
+    x = url_data.drop(['class'], axis=1)
     return train_test_split(x, y, test_size=0.2)
