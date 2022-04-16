@@ -1,4 +1,6 @@
 import os
+import pandas as pd
+
 from URLAnalyser.log import Log
 from URLAnalyser.constants import DATA_DIRECTORY
 from URLAnalyser.utils import get_class
@@ -20,14 +22,14 @@ from URLAnalyser.models.testing import generate_predictions
 from URLAnalyser.models.testing import calculate_metrics
 
 
-def load_data(dataset_name, feature_index, sample_size, use_cache, model_info):
+def load_data(dataset_name: str, feature_index: int, sample_size: float, use_cache: bool, model_info: dict) -> tuple:
     '''
         Load the data with the given configuration
 
         Parameters:
-            dataset_name: The dataset to use in training
-            feature_index: The features to use in training
-            sample_size: The size of the sample of data
+            dataset_name: Name of dataset to use in training
+            feature_index: Index of features to use in training
+            sample_size: Size of the sample of data
             use_cache: Use cached data if available
             model_info: Info on the chosen model
 
@@ -56,7 +58,7 @@ def load_data(dataset_name, feature_index, sample_size, use_cache, model_info):
     return x_train, x_test, y_train, y_test
 
 
-def train_model(x_train, y_train, filename, model_info):
+def train_model(x_train: pd.Dataframe, y_train: pd.Series, filename: str, model_info: dict) -> object:
     '''
         Train a model with the given configuration
 
@@ -67,12 +69,11 @@ def train_model(x_train, y_train, filename, model_info):
             model_info: Info on the chosen model
 
         Returns:
-            model: The trained model
+            model: The newly trained model
     '''
     # Instantiate object of model name
     Log.info(f"Creating model '{model_info['class']}'.")
-    class_object = get_class(model_info['class'])
-    model = class_object()
+    model = get_class(model_info['class'])()
     Log.success(f"Created model '{model_info['class']}'.")
 
     # Tune hyperparameters
@@ -94,7 +95,7 @@ def train_model(x_train, y_train, filename, model_info):
     return model
 
 
-def load_model(filename, model_info):
+def load_model(filename: str, model_info: dict) -> object:
     '''
         Load a model with the given configuration
 
@@ -116,9 +117,9 @@ def load_model(filename, model_info):
     return model
 
 
-def test_url(url_name, dataset_name, feature_index, model, model_info):
+def test_url(url_name: str, dataset_name: str, feature_index: int, model: object, model_info: dict) -> None:
     '''
-        Predict a URL as malicious or benign using the given model
+        Predict an individual URL as malicious or benign using the given model
 
         Parameters:
             model: The model to use in prediction
@@ -143,12 +144,12 @@ def test_url(url_name, dataset_name, feature_index, model, model_info):
     Log.result(f"The url '{url_name}' is predicted to be {result}")
 
 
-def test_model(x_test, y_test, model, model_info):
+def test_model(x_test: pd.DataFrame, y_test: pd.Series, model: object, model_info: dict) -> None:
     '''
         Test a model in terms of f1-score and recall
 
         Parameters:
-            x_test: The labels used in training
+            x_test: The features used in testing
             y_test: The labels used in testing
             model: The model to use in prediction
             model_info: Info on the chosen model
@@ -169,12 +170,12 @@ def test_model(x_test, y_test, model, model_info):
         Log.result(f"-> {metric} = {value}")
 
 
-def main(args):
+def main(args: dict) -> None:
     '''
         Process the arguments and determine the top-level functions to execute
 
         Parameters:
-            args: The arguments input from the user
+            args: Dict of arguments input from the user
 
         Returns:
             None
