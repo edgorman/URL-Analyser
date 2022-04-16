@@ -3,7 +3,7 @@ import re
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from URLAnalyser import app
+from URLAnalyser.constants import DATA_DIRECTORY
 from URLAnalyser.utils import url_is_valid
 from URLAnalyser.data.host import get_host
 from URLAnalyser.data.host import host_registrar
@@ -112,7 +112,7 @@ def _load_method(dataset_name):
 
 def load_url_data(dataset_name, sample_rate=1, use_cache=True, is_keras=False):
     load_method = _load_method(dataset_name)
-    path = os.path.join(app.DATA_DIRECTORY, "urls")
+    path = os.path.join(DATA_DIRECTORY, "urls")
 
     url_data = load_method(sample_rate, use_cache, path, is_keras)
     _save_file(url_data, dataset_name + ".csv", path)

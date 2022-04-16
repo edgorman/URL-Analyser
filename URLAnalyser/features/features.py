@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
-from URLAnalyser import app
+from URLAnalyser.constants import DATA_DIRECTORY
 from URLAnalyser.utils import load_json_as_dict
 from URLAnalyser.features.lexical import get_lexical
 from URLAnalyser.features.host import get_host
@@ -19,7 +19,7 @@ def _get_method(dataset_name):
 
 
 def get_url_features(url_name, dataset_name, feature_index):
-    vocab_path = os.path.join(app.DATA_DIRECTORY, "features", "vocab-dict.json")
+    vocab_path = os.path.join(DATA_DIRECTORY, "features", "vocab-dict.json")
     url_set = pd.DataFrame(data={"name": [url_name]})
     get_method = _get_method(dataset_name)
     return get_method(url_set, feature_index, load_json_as_dict(vocab_path))
@@ -27,7 +27,7 @@ def get_url_features(url_name, dataset_name, feature_index):
 
 def get_train_test_features(train_set, test_set, dataset_name, feature_index):
     get_method = _get_method(dataset_name)
-    vocab = load_json_as_dict(os.path.join(app.DATA_DIRECTORY, "features", "vocab-dict.json"))
+    vocab = load_json_as_dict(os.path.join(DATA_DIRECTORY, "features", "vocab-dict.json"))
 
     train_feats = get_method(train_set, feature_index)
     test_feats = get_method(test_set, feature_index, vocab)

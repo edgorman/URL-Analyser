@@ -1,9 +1,11 @@
 import os
 from URLAnalyser.log import Log
+from URLAnalyser.constants import DATA_DIRECTORY
 from URLAnalyser.utils import get_class
-from URLAnalyser.utils import generate_model_filename, load_json_as_dict
+from URLAnalyser.utils import generate_config_filename
+from URLAnalyser.utils import load_json_as_dict
 from URLAnalyser.utils import url_is_valid
-from URLAnalyser.utils import model_is_valid
+from URLAnalyser.utils import config_is_valid
 from URLAnalyser.utils import model_is_stored
 from URLAnalyser.data.data import load_url_data
 from URLAnalyser.data.data import get_train_test_data
@@ -16,13 +18,6 @@ from URLAnalyser.features.features import get_url_features, scale_features
 from URLAnalyser.features.features import get_train_test_features
 from URLAnalyser.models.testing import generate_predictions
 from URLAnalyser.models.testing import calculate_metrics
-
-
-# App constants
-PARENT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
-DATA_DIRECTORY = os.path.join(PARENT_DIRECTORY, "data")
-FEATURES_DIRECTORY = os.path.join(PARENT_DIRECTORY, "features")
-MODELS_DIRECTORY = os.path.join(PARENT_DIRECTORY, "models")
 
 
 def load_data(dataset_name, feature_index, sample_size, use_cache, model_info):
@@ -191,11 +186,11 @@ def main(args):
         Log.error("Could not load 'results-dict.json' in 'data/models/'.")
 
     # Check the arguments passed are valid
-    if not model_is_valid(args.model, args.data, args.feats, models_dict):
+    if not config_is_valid(args.model, args.data, args.feats):
         Log.error(f"Could not load model '{args.model}' for data type '{args.data}' and feature index '{args.feats}'.")
 
     # Generate model filename and whether it is a Keras model
-    model_filename = generate_model_filename(args.model, args.data, args.feats)
+    model_filename = generate_config_filename(args.model, args.data, args.feats)
     model_info = models_dict[args.model]
 
     # Load data and features

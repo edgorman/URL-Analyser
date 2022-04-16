@@ -44,7 +44,7 @@ from URLAnalyser.data.data import load_url_data
     )
 ])
 def test_load_url_data(dataset_name, ignore_columns, expected):
-    # TODO: Update app.DATA_DIRECTORY to use test version of directory
+    # TODO: Update constants.DATA_DIRECTORY to use test version of directory
     expected = pd.DataFrame(data=expected)
     df = load_url_data(dataset_name, use_cache=False, is_keras=True)
 
