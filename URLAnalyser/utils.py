@@ -5,6 +5,7 @@ from importlib import import_module
 from sklearn.feature_extraction.text import CountVectorizer
 
 from URLAnalyser.constants import DATA_DIRECTORY
+from URLAnalyser.constants import MODEL_DATA_DIRECTORY
 from URLAnalyser.data.host import get_host
 from URLAnalyser.data.content import get_content
 
@@ -90,7 +91,7 @@ def config_is_valid(model_name: str, dataset_name: str, feature_index: int) -> b
         Returns:
             result: True if configuration is valid, False if not
     '''
-    models_dict = load_json_as_dict(os.path.join(DATA_DIRECTORY, "models", "results-dict.json"))
+    models_dict = load_json_as_dict(os.path.join(MODEL_DATA_DIRECTORY, "results-dict.json"))
 
     if model_name in models_dict.keys():
         if dataset_name in models_dict[model_name]['featuresets'].keys():
@@ -110,7 +111,7 @@ def model_is_stored(filename: str) -> bool:
         Returns:
             result: True if file name is present, False if not
     '''
-    model_filenames = [s.split(".")[0] for s in os.listdir(os.path.join(DATA_DIRECTORY, "models"))]
+    model_filenames = [s.split(".")[0] for s in os.listdir(MODEL_DATA_DIRECTORY)]
     return filename in model_filenames
 
 

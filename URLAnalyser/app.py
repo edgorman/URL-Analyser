@@ -2,7 +2,7 @@ import os
 import pandas as pd
 
 from URLAnalyser.log import Log
-from URLAnalyser.constants import DATA_DIRECTORY
+from URLAnalyser.constants import MODEL_DATA_DIRECTORY
 from URLAnalyser.utils import get_class
 from URLAnalyser.utils import generate_config_filename
 from URLAnalyser.utils import load_json_as_dict
@@ -182,7 +182,7 @@ def main(args: dict) -> None:
     '''
     # Check the required resources are available
     try:
-        models_dict = load_json_as_dict(os.path.join(DATA_DIRECTORY, "models", "results-dict.json"))
+        models_dict = load_json_as_dict(os.path.join(MODEL_DATA_DIRECTORY, "results-dict.json"))
     except BaseException:
         Log.error("Could not load 'results-dict.json' in 'data/models/'.")
 

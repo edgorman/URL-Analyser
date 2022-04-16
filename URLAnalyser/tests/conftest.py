@@ -31,6 +31,11 @@ def url_data_directory(data_directory):
 
 
 @pytest.fixture(autouse=True)
+def model_data_directory(data_directory):
+    return os.path.join(data_directory, "models")
+
+
+@pytest.fixture(autouse=True)
 def features_directory(parent_directory):
     return os.path.join(parent_directory, "features")
 
