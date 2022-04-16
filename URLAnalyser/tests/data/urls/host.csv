@@ -1,3 +1,0 @@
-name,class,is_valid,registrar,location,server_count,creation_date,updated_date,expiration_date,speed,latency
-bbc.co.uk,1,True,British Broadcasting Corporation [Tag = BBC],,0,,2020-12-10 00:00:00,2025-12-13 00:00:00,0.027332799999999935,10.34
-google.com,0,True,MarkMonitor Inc.,,4,1997-09-15 04:00:00,2019-09-09 15:39:04,2028-09-14 04:00:00,0.3159225000000001,10.37
