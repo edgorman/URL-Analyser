@@ -94,7 +94,7 @@ def test_get_class(class_name, expected):
     assert isinstance(get_class(class_name), type(expected))
 
 
-def test_bag_of_words(data_directory):
+def test_bag_of_words(features_data_directory):
     series = pd.Series([
         'This is the first document.',
         'This document is the second document.',
@@ -102,7 +102,7 @@ def test_bag_of_words(data_directory):
         'Is this the first document?',
     ])
 
-    with mock.patch('URLAnalyser.utils.DATA_DIRECTORY', data_directory):
+    with mock.patch('URLAnalyser.utils.FEATURES_DATA_DIRECTORY', features_data_directory):
         features = bag_of_words(pd.DataFrame(), series, 'example')
 
     assert len(features) == 4

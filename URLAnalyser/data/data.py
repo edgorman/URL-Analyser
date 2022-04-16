@@ -148,7 +148,7 @@ def _load_method(dataset_name: str):
         return None
 
 
-def load_url_data(dataset_name: str, sample_rate: float = 1, use_cache: bool = True, is_keras: bool = False):
+def get_url_data(dataset_name: str, sample_rate: float = 1, use_cache: bool = True, is_keras: bool = False):
     '''
         Load the url dataframe for the corresponding dataset
 

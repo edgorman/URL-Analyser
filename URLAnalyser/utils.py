@@ -4,7 +4,7 @@ import pandas as pd
 from importlib import import_module
 from sklearn.feature_extraction.text import CountVectorizer
 
-from URLAnalyser.constants import DATA_DIRECTORY
+from URLAnalyser.constants import FEATURES_DATA_DIRECTORY
 from URLAnalyser.constants import MODEL_DATA_DIRECTORY
 from URLAnalyser.data.host import get_host
 from URLAnalyser.data.content import get_content
@@ -149,7 +149,7 @@ def get_class(class_name: str) -> object:
     return getattr(import_module(path), name)
 
 
-def bag_of_words(features: pd.DataFrame, series: pd.Series, key: str) -> pd.DataFrame:
+def bag_of_words(features: pd.DataFrame, series: pd.Series, key: str, use_cache: bool = True) -> pd.DataFrame:
     '''
         Append the bag of words feature and return the original dataframe
 
@@ -157,19 +157,20 @@ def bag_of_words(features: pd.DataFrame, series: pd.Series, key: str) -> pd.Data
             features: Existing features dataframe
             series: Column of data to apply bag of words to
             key: Name of the vocab to use
+            use_cache: Whether to use the cahced version
 
         Returns:
             features: Features dataframe with bag of words columns
     '''
-    vocab = load_json_as_dict(os.path.join(DATA_DIRECTORY, "features", "vocab-dict.json"))
+    vocab = load_json_as_dict(os.path.join(FEATURES_DATA_DIRECTORY, "vocab-dict.json"))
 
-    if len(vocab) == 0 or key not in vocab:
+    if use_cache and key in vocab:
+        vectorizer = CountVectorizer(vocabulary=vocab[key], decode_error='ignore')
+    else:
         vectorizer = CountVectorizer(decode_error="ignore")
         vectorizer.fit_transform(series)
         vocab[key] = {k: v.tolist() for k, v in vectorizer.vocabulary_.items()}
-        save_dict_as_json(vocab, os.path.join(DATA_DIRECTORY, "features", "vocab-dict.json"))
-    else:
-        vectorizer = CountVectorizer(vocabulary=vocab[key], decode_error='ignore')
+        save_dict_as_json(vocab, os.path.join(FEATURES_DATA_DIRECTORY, "vocab-dict.json"))
 
     bow_df = pd.DataFrame(vectorizer.transform(series).todense(), columns=vectorizer.get_feature_names())
     features = features.reset_index()

@@ -1,19 +1,18 @@
-from collections import defaultdict
 import pandas as pd
 from URLAnalyser.utils import bag_of_words
 
 
-def get_host(urls, index, vocab=defaultdict()):
+def get_host(urls, index, use_cache=True):
     features = pd.DataFrame()
 
     if index == 0 or index == 1:
-        features = bag_of_words(features, urls['location'], 'location')
+        features = bag_of_words(features, urls['location'], 'location', use_cache)
 
     if index == 0 or index == 2:
         features.insert(0, 'server_count', urls['server_count'], True)
 
     if index == 0 or index == 3:
-        features = bag_of_words(features, urls['registrar'], 'lexical')
+        features = bag_of_words(features, urls['registrar'], 'lexical', use_cache)
 
     if index == 0 or index == 4:
         features.insert(0, 'creation_month', urls['creation_date'].month, True)

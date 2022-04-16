@@ -8,7 +8,7 @@ from URLAnalyser.data.data import _load_lexical
 from URLAnalyser.data.data import _load_host
 from URLAnalyser.data.data import _load_content
 from URLAnalyser.data.data import _load_method
-from URLAnalyser.data.data import load_url_data
+from URLAnalyser.data.data import get_url_data
 from URLAnalyser.data.data import get_train_test_data
 
 
@@ -95,15 +95,13 @@ def test_load_method(dataset_name, expected):
         }
     )
 ])
-def test_load_url_data(dataset_name, ignore_columns, expected, url_data_directory):
-    # TODO: Update constants.DATA_DIRECTORY to use test version of directory
+def test_get_url_data(dataset_name, ignore_columns, expected, url_data_directory):
     expected = pd.DataFrame(data=expected)
-
     with mock.patch('URLAnalyser.data.data.URL_DATA_DIRECTORY', url_data_directory):
-        df = load_url_data(dataset_name, use_cache=False, is_keras=True)
+        df = get_url_data(dataset_name, use_cache=False, is_keras=True)
 
-    assert isinstance(expected, pd.DataFrame)
-    assert all([col in expected.columns for col in df.columns])
+    assert isinstance(df, pd.DataFrame)
+    assert all([col in df.columns for col in expected.columns])
 
     # Drop columns that we can't compare easily
     expected.drop(ignore_columns, axis=1, inplace=True)

@@ -1,5 +1,4 @@
 import string
-from collections import defaultdict
 import numpy as np
 import pandas as pd
 from URLAnalyser.utils import bag_of_words
@@ -17,7 +16,7 @@ def char_count(url, list):
     return sum(map(url.count, list))
 
 
-def get_lexical(urls, index, vocab=defaultdict()):
+def get_lexical(urls, index, use_cache=True):
     features = pd.DataFrame()
 
     if index == 0 or index == 1:
@@ -39,6 +38,6 @@ def get_lexical(urls, index, vocab=defaultdict()):
         features.insert(0, 'numberCharCount', urls['name'].apply(lambda x: char_count(x, string.digits)), True)
 
     if index == 0 or index == 7:
-        features = bag_of_words(features, urls['name'], 'lexical')
+        features = bag_of_words(features, urls['name'], 'lexical', use_cache)
 
     return features

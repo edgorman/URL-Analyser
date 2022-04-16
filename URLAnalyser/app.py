@@ -1,23 +1,24 @@
 import os
 import pandas as pd
 
-from URLAnalyser.log import Log
 from URLAnalyser.constants import MODEL_DATA_DIRECTORY
+from URLAnalyser.log import Log
 from URLAnalyser.utils import get_class
 from URLAnalyser.utils import generate_config_filename
 from URLAnalyser.utils import load_json_as_dict
 from URLAnalyser.utils import url_is_valid
 from URLAnalyser.utils import config_is_valid
 from URLAnalyser.utils import model_is_stored
-from URLAnalyser.data.data import load_url_data
+from URLAnalyser.data.data import get_url_data
 from URLAnalyser.data.data import get_train_test_data
+from URLAnalyser.features.features import get_url_features
+from URLAnalyser.features.features import get_train_features
+from URLAnalyser.features.features import scale_features
 from URLAnalyser.models.keras import save_model as save_keras
 from URLAnalyser.models.keras import load_model as load_keras
 from URLAnalyser.models.sklearn import save_model as save_sklearn
 from URLAnalyser.models.sklearn import load_model as load_sklearn
 from URLAnalyser.models.training import tune_hyperparameters
-from URLAnalyser.features.features import get_url_features, scale_features
-from URLAnalyser.features.features import get_train_test_features
 from URLAnalyser.models.testing import generate_predictions
 from URLAnalyser.models.testing import calculate_metrics
 
@@ -41,13 +42,13 @@ def load_data(dataset_name: str, feature_index: int, sample_size: float, use_cac
     '''
     # Load URLs and split into train and test set
     Log.info(f"Loading url data for '{dataset_name}'.")
-    url_data = load_url_data(dataset_name, sample_size, use_cache, model_info["isKeras"])
+    url_data = get_train_features(dataset_name, sample_size, use_cache, model_info["isKeras"])
     x_train, x_test, y_train, y_test = get_train_test_data(url_data)
     Log.success(f"Loaded url data for '{dataset_name}'.")
 
     # Extract the features
     Log.info(f"Generating features for '{dataset_name}'.")
-    x_train, x_test = get_train_test_features(x_train, x_test, dataset_name, feature_index)
+    x_train, x_test = get_train_features(x_train, x_test, dataset_name, feature_index)
     Log.success(f"Generated features for '{dataset_name}'.")
 
     # Normalise features
@@ -132,12 +133,16 @@ def test_url(url_name: str, dataset_name: str, feature_index: int, model: object
     if dataset_name != 'lexical' and not url_is_valid(url_name):
         Log.error(f"Could not load url '{url_name}'.")
 
+    Log.info(f"Loading data for url '{url_name}'.")
+    data = get_url_data(url_name, dataset_name, model_info["isKeras"])
+    Log.success(f"Loaded data for url '{url_name}'.")
+
     Log.info(f"Loading features for url '{url_name}'.")
-    features = get_url_features(url_name, dataset_name, feature_index, url_name)
+    features = get_url_features(data, dataset_name, feature_index)
     Log.success(f"Loaded features for url '{url_name}'.")
 
     Log.info(f"Generating prediction for url '{url_name}'.")
-    result = generate_predictions(model, model_info["isKeras"], features)[0]
+    result = generate_predictions(model, features, model_info["isKeras"])[0]
     Log.success(f"Generated prediction for url '{url_name}'.")
 
     result = "Benign" if result else "Malicious"
@@ -158,7 +163,7 @@ def test_model(x_test: pd.DataFrame, y_test: pd.Series, model: object, model_inf
             None
     '''
     Log.info("Generating predictions from tests.")
-    predictions = generate_predictions(model, model_info["isKeras"], x_test)
+    predictions = generate_predictions(model, x_test, model_info["isKeras"])
     Log.success("Generated predictions from tests.")
 
     Log.info("Generating metrics for model.")
