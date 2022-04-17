@@ -9,7 +9,6 @@ from URLAnalyser.models.sklearn import load_model
 
 def test_load_model(sklearn_model):
     with tempfile.TemporaryDirectory() as tmp_dir:
-
         pickle.dump(sklearn_model, open(os.path.join(tmp_dir, "sklearn_model.pkl"), 'wb'))
         with mock.patch('URLAnalyser.models.sklearn.MODEL_DATA_DIRECTORY', tmp_dir):
             model = load_model('sklearn_model')

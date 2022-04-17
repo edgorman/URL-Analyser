@@ -1,6 +1,8 @@
 import os
 import mock
 import pytest
+import pickle
+import tempfile
 import pandas as pd
 from sklearn.svm import SVC
 from keras import Model
@@ -80,10 +82,15 @@ def test_generate_config_filename(model_name, dataset_name, feature_index, expec
     ("a", "b", "c", True),
     ("a", "b", "d", False),
 ])
-def test_model_is_stored(model_name, dataset_name, feature_index, expected, model_data_directory):
-    filename = generate_config_filename(model_name, dataset_name, feature_index)
-    with mock.patch('URLAnalyser.utils.MODEL_DATA_DIRECTORY', model_data_directory):
-        assert model_is_stored(filename) == expected
+def test_model_is_stored(model_name, dataset_name, feature_index, expected, sklearn_model):
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        filename = generate_config_filename(model_name, dataset_name, feature_index)
+
+        if expected:
+            pickle.dump(sklearn_model, open(os.path.join(tmp_dir, filename), 'wb'))
+
+        with mock.patch('URLAnalyser.utils.MODEL_DATA_DIRECTORY', tmp_dir):
+            assert model_is_stored(filename) == expected
 
 
 @pytest.mark.parametrize("class_name,expected", [

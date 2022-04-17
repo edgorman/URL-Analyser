@@ -10,10 +10,7 @@ from sklearn.svm import SVC
 from URLAnalyser.features.features import get_train_features, scale_train_features
 
 
-# NOTE: If you want to print anything while testing
-#       You will need to comment out this fixture below
-#       Which captures all text automatically
-@pytest.fixture(autouse=True)
+@pytest.fixture()
 def tmp_out():
     out = StringIO()
     sys.stdout = out
