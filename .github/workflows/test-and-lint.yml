@@ -45,4 +45,4 @@ jobs:
     - name: Test with pytest
       shell: pwsh
       run: |
-        python -m pytest tests/ --disable-pytest-warnings --cov=URLAnalyser -vs
+        python -m pytest URLAnalyser/tests/ --disable-pytest-warnings --cov=URLAnalyser -vs
