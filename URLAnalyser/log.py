@@ -3,7 +3,7 @@ from colorama import Fore
 
 class Log:
     '''
-        Handles all log and results messages output to the terminal
+        Handles all print statements to the terminal
 
         The 'verboseness' variable controls how verbose the log messages should be:
             * 0 = Default, show only results and error messages
@@ -24,7 +24,7 @@ class Log:
     @staticmethod
     def error(message):
         print(Fore.RED + "[ERROR]: " + message)
-        Log.result("Exiting due to an error within the module.")
+        Log.result("Exiting due to an error within the module. For more info re-run the program with the verbose flag.")
         exit(-1)
 
     @staticmethod

@@ -2,6 +2,8 @@ import os
 import sys
 import pytest
 from io import StringIO
+import tensorflow as tf
+from sklearn.svm import SVC
 
 
 # NOTE: If you want to print anything while testing
@@ -48,3 +50,15 @@ def features_directory(parent_directory):
 @pytest.fixture(autouse=True)
 def models_directory(parent_directory):
     return os.path.join(parent_directory, "models")
+
+
+@pytest.fixture(autouse=True)
+def keras_model():
+    model = tf.keras.Sequential()
+    model.add(tf.keras.layers.Dense(5, input_shape=(5,)))
+    return model
+
+
+@pytest.fixture(autouse=True)
+def sklearn_model():
+    return SVC()
