@@ -2,6 +2,10 @@
 
 A comprehensive investigation for the development of a malicious URL detection system using Machine Learning. This contributed to my BSc Computer Science degree at University of Southampton, which received a First-Class with honours classification.
 
+[![Lint and Test Application](https://github.com/edgorman/URL-Analyser/actions/workflows/test-and-lint.yml/badge.svg)](https://github.com/edgorman/URL-Analyser/actions/workflows/test-and-lint.yml)
+
+![Picture of help message.](docs/images/url_analyser-2.0.png)
+
 ## Installation
 Use the following command to clone the respository:
 ```
@@ -40,13 +44,12 @@ Run the testing scripts in the base directory:
 ```
 python -m autopep8 . --in-place --aggressive --recursive --max-line-length 120
 python -m flake8 . --max-line-length=120
-python -m pytest tests/ --disable-pytest-warnings --cov=URLAnalyser -vs
+python -m pytest URLAnalyser/tests/ --disable-pytest-warnings --cov=URLAnalyser -vs
 ```
 
-To update the environment and requirement files, run:
+To update the environment file, run:
 ```
 conda env export > environment.yml
-pip list --format=freeze > requirements.txt
 ```
 
 ## Contributing

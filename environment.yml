@@ -10,7 +10,7 @@ dependencies:
   - pywinpty==1.1.4=py36hcae0e51_0
   - cloudpickle==1.6.0=py_0
   - jupyter==1.0.0=py36ha15d459_6
-  - h5py==3.1.0=nompi_py36hf359dfe_100
+  - h5py==2.10.0=nompi_py36h654ec23_106
   - testpath==0.5.0=pyhd8ed1ab_0
   - mkl==2022.0.0=h0e2418a_796
   - termcolor==1.1.0=py_2
@@ -156,6 +156,7 @@ dependencies:
   - requests
   - flake8
   - autopep8
+  - mock
   - pip:
     - python-whois
     - pythonping

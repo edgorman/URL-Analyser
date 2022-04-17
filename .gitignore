@@ -2,7 +2,7 @@
 URLAnalyser/data/urls/blacklist.txt
 URLAnalyser/data/urls/whitelist.txt
 URLAnalyser/data/urls/*.csv
-tests/data/urls/*.csv
+URLAnalyser/tests/data/urls/*.csv
 *.pkl
 
 ### VisualStudioCode ###

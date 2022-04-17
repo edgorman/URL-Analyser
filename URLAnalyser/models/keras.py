@@ -1,12 +1,12 @@
 import os
-from keras.models import load_model as load
+import tensorflow as tf
+
+from URLAnalyser.constants import MODEL_DATA_DIRECTORY
 
 
-def save_model(model, filename, path=os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), "..", "data", "models")):
-    model.save(os.path.join(path, filename))
+def load_model(filename: str) -> tf.keras.models.Model:
+    return tf.keras.models.load_model(os.path.join(MODEL_DATA_DIRECTORY, filename))
 
 
-def load_model(filename, path=os.path.join(os.path.dirname(
-        os.path.realpath(__file__)), "..", "data", "models")):
-    return load(os.path.join(path, filename))
+def save_model(model: tf.keras.models.Model, filename: str) -> None:
+    model.save(os.path.join(MODEL_DATA_DIRECTORY, filename))
