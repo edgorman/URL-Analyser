@@ -79,7 +79,7 @@ def train_model(x_train: pd.Dataframe, y_train: pd.Series, filename: str, model_
 
     # Tune hyperparameters
     Log.info(f"Tuning hyperparameters for '{model_info['class']}'.")
-    model = tune_hyperparameters(model, model_info["hyperparameters"], x_train, y_train)
+    model = tune_hyperparameters(model, model_info["isKeras"], model_info["hyperparameters"], x_train, y_train)
     Log.success(f"Tuned hyperparameters for '{model_info['class']}'.")
 
     # Train the model

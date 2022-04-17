@@ -1,10 +1,12 @@
 import os
 import mock
 import tempfile
-import tensorflow as tf
 
 from URLAnalyser.models.keras import load_model
 from URLAnalyser.models.keras import save_model
+
+import tensorflow as tf
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.FATAL)
 
 
 def test_load_model(keras_model):
