@@ -13,7 +13,8 @@ from URLAnalyser.data.data import get_url_data
 from URLAnalyser.data.data import get_train_test_data
 from URLAnalyser.features.features import get_url_features
 from URLAnalyser.features.features import get_train_features
-from URLAnalyser.features.features import scale_features
+from URLAnalyser.features.features import scale_train_features
+from URLAnalyser.features.features import scale_url_features
 from URLAnalyser.models.keras import save_model as save_keras
 from URLAnalyser.models.keras import load_model as load_keras
 from URLAnalyser.models.sklearn import save_model as save_sklearn
@@ -53,13 +54,13 @@ def load_data(dataset_name: str, feature_index: int, sample_size: float, use_cac
 
     # Normalise features
     Log.info(f"Normalising features for '{dataset_name}'.")
-    x_train, x_test = scale_features(x_train, x_test)
+    x_train, x_test = scale_train_features(x_train, x_test)
     Log.success(f"Normalised features for '{dataset_name}'.")
 
     return x_train, x_test, y_train, y_test
 
 
-def train_model(x_train: pd.Dataframe, y_train: pd.Series, filename: str, model_info: dict) -> object:
+def train_model(x_train: pd.DataFrame, y_train: pd.Series, filename: str, model_info: dict) -> object:
     '''
         Train a model with the given configuration
 
@@ -108,6 +109,7 @@ def load_model(filename: str, model_info: dict) -> object:
             model: The previously trained model
     '''
     try:
+        # Load model from storage
         Log.info(f"Loading model from '{filename}'.")
         load_method = load_keras if model_info["isKeras"] else load_sklearn
         model = load_method(filename)
@@ -130,21 +132,31 @@ def test_url(url_name: str, dataset_name: str, feature_index: int, model: object
         Returns:
             None
     '''
+    # Check that the URL passed is valid
     if dataset_name != 'lexical' and not url_is_valid(url_name):
         Log.error(f"Could not load url '{url_name}'.")
 
+    # Load data for URL
     Log.info(f"Loading data for url '{url_name}'.")
     data = get_url_data(url_name, dataset_name, model_info["isKeras"])
     Log.success(f"Loaded data for url '{url_name}'.")
 
+    # Load features for URL
     Log.info(f"Loading features for url '{url_name}'.")
     features = get_url_features(data, dataset_name, feature_index)
     Log.success(f"Loaded features for url '{url_name}'.")
 
+    # Scale features for URL
+    Log.info(f"Normalising features for '{dataset_name}'.")
+    features = scale_url_features(features)
+    Log.success(f"Normalised features for '{dataset_name}'.")
+
+    # Generate predictions for URL
     Log.info(f"Generating prediction for url '{url_name}'.")
     result = generate_predictions(model, features, model_info["isKeras"])[0]
     Log.success(f"Generated prediction for url '{url_name}'.")
 
+    # Print result for URL
     result = "Benign" if result else "Malicious"
     Log.result(f"The url '{url_name}' is predicted to be {result}")
 
@@ -162,14 +174,17 @@ def test_model(x_test: pd.DataFrame, y_test: pd.Series, model: object, model_inf
         Returns:
             None
     '''
+    # Generate predictions using the model
     Log.info("Generating predictions from tests.")
     predictions = generate_predictions(model, x_test, model_info["isKeras"])
     Log.success("Generated predictions from tests.")
 
+    # Generate metrics for the models predictions
     Log.info("Generating metrics for model.")
     results = calculate_metrics(predictions, y_test)
     Log.success("Generated metrics for model.")
 
+    # Print results for model
     Log.result("The scoring metrics for the model are as follows:")
     for metric, value in results.items():
         Log.result(f"-> {metric} = {value}")

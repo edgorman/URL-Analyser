@@ -4,7 +4,7 @@ A comprehensive investigation for the development of a malicious URL detection s
 
 [![Lint and Test Application](https://github.com/edgorman/URL-Analyser/actions/workflows/test-and-lint.yml/badge.svg)](https://github.com/edgorman/URL-Analyser/actions/workflows/test-and-lint.yml)
 
-
+![Picture of help message.](docs/images/url_analyser-2.0.png)
 
 ## Installation
 Use the following command to clone the respository:
