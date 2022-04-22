@@ -20,11 +20,11 @@ def create_layers(input_dim: int, pen_layer: tuple, dropout_rate: int, ult_layer
     conv1 = tf.keras.layers.MaxPooling1D(name='max_pool_3', pool_size=198)(conv1)
     conv1 = tf.keras.layers.Flatten(name='flatten_3')(conv1)
 
-    conv2 = tf.keras.layers.Conv1D(name='conv_filter_4', filters=256, kernel_size=(4,))(conv1)
+    conv2 = tf.keras.layers.Conv1D(name='conv_filter_4', filters=256, kernel_size=(4,))(embed)
     conv2 = tf.keras.layers.MaxPooling1D(name='max_pool_4', pool_size=197)(conv2)
     conv2 = tf.keras.layers.Flatten(name='flatten_4')(conv2)
 
-    conv3 = tf.keras.layers.Conv1D(name='conv_filter_5', filters=256, kernel_size=(5,))(conv2)
+    conv3 = tf.keras.layers.Conv1D(name='conv_filter_5', filters=256, kernel_size=(5,))(embed)
     conv3 = tf.keras.layers.MaxPooling1D(name='max_pool_5', pool_size=196)(conv3)
     conv3 = tf.keras.layers.Flatten(name='flatten_5')(conv3)
 

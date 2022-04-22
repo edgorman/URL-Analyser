@@ -1,9 +1,11 @@
 import os
 import mock
+import pytest
 import tempfile
 
 from URLAnalyser.models.keras import load_model
 from URLAnalyser.models.keras import save_model
+from URLAnalyser.models.keras import create_layers
 
 import tensorflow as tf
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.FATAL)
@@ -30,3 +32,26 @@ def test_save_model(keras_model):
 
         assert "keras_model" in os.listdir(tmp_dir)
         assert isinstance(model, type(keras_model))
+
+
+@pytest.mark.parametrize("input_dim,pen_layer,dropout_rate,ult_layer,expected", [
+    (
+        69,
+        (128, "sigmoid"),
+        0.2,
+        (256, "elu"),
+        16
+    ),
+    (
+        138,
+        (256, "elu"),
+        0.8,
+        (128, "sigmoid"),
+        16
+    )
+])
+def test_create_layers(input_dim, pen_layer, dropout_rate, ult_layer, expected):
+    model = create_layers(input_dim, pen_layer, dropout_rate, ult_layer)
+
+    assert isinstance(model, tf.keras.Model)
+    assert len(model.layers) == expected
