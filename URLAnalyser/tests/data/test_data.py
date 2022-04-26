@@ -69,7 +69,7 @@ def test_load_method(dataset_name, expected):
     ),
     (
         "host",
-        ["updated_date", "expiration_date", "speed", "latency"],
+        ["registrar", "updated_date", "expiration_date", "speed", "latency"],
         {
             'name': ["google.com", "bbc.co.uk"],
             'class': [0, 1],

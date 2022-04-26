@@ -2,8 +2,11 @@
 URLAnalyser/data/urls/blacklist.txt
 URLAnalyser/data/urls/whitelist.txt
 URLAnalyser/data/urls/*.csv
+URLAnalyser/data/models/keras/*.csv
 URLAnalyser/tests/data/urls/*.csv
+URLAnalyser/tests/data/models/keras/*.csv
 *.pkl
+/talos
 
 ### VisualStudioCode ###
 .vscode

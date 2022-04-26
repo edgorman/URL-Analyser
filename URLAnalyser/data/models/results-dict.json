@@ -77,7 +77,7 @@
     },
     "cnn": {
         "title": "Convolutional Neural Network",
-        "class": "keras.Model",
+        "class": "tf.keras.Sequential",
         "isKeras": true,
         "hyperparameters": {
             "first_activation": ["sigmoid", "elu"],
