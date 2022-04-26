@@ -7,7 +7,9 @@ from URLAnalyser.models.keras import load_model
 from URLAnalyser.models.keras import save_model
 from URLAnalyser.models.keras import create_layers
 
+import warnings
 import tensorflow as tf
+warnings.simplefilter(action='ignore', category=FutureWarning)
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.FATAL)
 
 

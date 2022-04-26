@@ -1,6 +1,7 @@
 import os
 import tensorflow as tf
 
+from URLAnalyser.log import Log
 from URLAnalyser.constants import MODEL_DATA_DIRECTORY
 
 
@@ -39,3 +40,10 @@ def create_layers(input_dim: int, pen_layer: tuple, dropout_rate: int, ult_layer
     model.compile(optimizer='adam', loss='binary_crossentropy')
 
     return model
+
+
+def get_input_dim(model: tf.keras.models.Sequential) -> int:
+    try:
+        return model.layers[1]._self_unconditional_dependency_names['embeddings'].shape[0]
+    except Exception:
+        Log.Error("Could not extract input dimension from embedding layer, check you are using the correct model.")

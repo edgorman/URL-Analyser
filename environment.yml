@@ -157,6 +157,7 @@ dependencies:
   - flake8
   - autopep8
   - mock
+  - talos
   - pip:
     - python-whois
     - pythonping

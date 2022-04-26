@@ -39,6 +39,11 @@ def model_data_directory(data_directory):
 
 
 @pytest.fixture(autouse=True, scope='module')
+def talos_data_directory():
+    return "talos"
+
+
+@pytest.fixture(autouse=True, scope='module')
 def features_data_directory(data_directory):
     return os.path.join(data_directory, "features")
 
