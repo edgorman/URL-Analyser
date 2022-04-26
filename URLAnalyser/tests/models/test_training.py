@@ -13,17 +13,17 @@ from URLAnalyser.models.training import tune_hyperparameters
             "gamma": ['scale', 'auto'],
             "degree": [1, 2, 3, 5, 10]
         }
-    ),
-    (
-        True,
-        {
-            "first_activation": ['sigmoid', 'elu'],
-            "second_activation": ['sigmoid', 'elu'],
-            "dropout": [0.2, 0.5],
-            "first_neuron": [128, 256],
-            "second_neuron": [128, 256]
-        }
     )
+    # (
+    #     True,
+    #     {
+    #         "first_activation": ['sigmoid', 'elu'],
+    #         "second_activation": ['sigmoid', 'elu'],
+    #         "dropout": [0.2, 0.5],
+    #         "first_neuron": [128, 256],
+    #         "second_neuron": [128, 256]
+    #     }
+    # )
 ])
 def test_tune_hyperparameters(is_keras,
                               hyperparameters,
